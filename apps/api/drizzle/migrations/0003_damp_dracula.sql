@@ -1,0 +1,1 @@
+ALTER TABLE "event_exceptions" ADD CONSTRAINT "event_exceptions_event_id_target_date_pk" PRIMARY KEY("event_id","target_date");
