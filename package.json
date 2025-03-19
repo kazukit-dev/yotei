@@ -2,7 +2,13 @@
   "name": "time-blocker",
   "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preinstall": "npx only-allow pnpm",
+    "test:api": "pnpm --filter ./apps/api test",
+    "dev:all": "pnpm --filter './apps/*' dev",
+    "format:fix:all": "pnpm --filter './apps/*' format:fix",
+    "lint:fix:all": "pnpm --filter './apps/*' lint:fix",
+    "format:all": "pnpm --filter './apps/*' format",
+    "lint:all": "pnpm --filter './apps/*' lint"
   },
   "keywords": [
     "time-blocker",
@@ -14,6 +20,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "1.9.4"
-  }
+    "@biomejs/biome": "1.9.4",
+    "only-allow": "^1.2.1"
+  },
+  "engines": {
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.6.5"
 }
