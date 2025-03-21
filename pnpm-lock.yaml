@@ -84,6 +84,9 @@ importers:
       '@fullcalendar/timegrid':
         specifier: ^6.1.15
         version: 6.1.15(@fullcalendar/core@6.1.15)
+      '@internationalized/date':
+        specifier: ^3.7.0
+        version: 3.7.0
       '@remix-run/node':
         specifier: ^2.13.1
         version: 2.16.2(typescript@5.8.2)

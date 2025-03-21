@@ -5,10 +5,8 @@
     "preinstall": "npx only-allow pnpm",
     "test:api": "pnpm --filter ./apps/api test",
     "dev:all": "pnpm --filter './apps/*' dev",
-    "format:fix:all": "pnpm --filter './apps/*' format:fix",
-    "lint:fix:all": "pnpm --filter './apps/*' lint:fix",
-    "format:all": "pnpm --filter './apps/*' format",
-    "lint:all": "pnpm --filter './apps/*' lint"
+    "biome:check": "pnpm --filter './apps/*' biome:check",
+    "biome": "pnpm --filter './apps/*' biome"
   },
   "keywords": [
     "time-blocker",
@@ -26,8 +24,5 @@
   "engines": {
     "pnpm": ">=10.0.0"
   },
-  "packageManager": "pnpm@10.6.5",
-  "volta": {
-    "node": "22.14.0"
-  }
+  "packageManager": "pnpm@10.6.5"
 }
