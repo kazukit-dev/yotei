@@ -1,5 +1,5 @@
 import { and } from "drizzle-orm";
-import { err, ok,ResultAsync } from "neverthrow";
+import { err, ok, ResultAsync } from "neverthrow";
 
 import { DBError, EntityNotFound } from "../../common/errors";
 import type { createDBClient } from "../../db";

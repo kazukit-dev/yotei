@@ -1,4 +1,4 @@
-import { err, ok,Result } from "neverthrow";
+import { err, ok, Result } from "neverthrow";
 
 import { ValidationError } from "../../common/errors";
 import { compare } from "../../helpers/date";
@@ -6,7 +6,7 @@ import dayjs from "../../helpers/dayjs";
 import { tuple } from "../../helpers/tuple";
 import { Duration, type End, type Start, toDates } from "../objects/date";
 import type { Event } from "../objects/event/write";
-import { updateEvent,UpdatePattern } from "../objects/event/write";
+import { updateEvent, UpdatePattern } from "../objects/event/write";
 import { ExceptionDate } from "../objects/exception/write";
 import { getRecurringDates } from "../objects/rrule/read";
 import { Title } from "../objects/title";

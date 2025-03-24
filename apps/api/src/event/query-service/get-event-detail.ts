@@ -1,4 +1,4 @@
-import { err, ok,ResultAsync } from "neverthrow";
+import { err, ok, ResultAsync } from "neverthrow";
 
 import { DBError, EntityNotFound } from "../../common/errors";
 import type { DB } from "../../db";

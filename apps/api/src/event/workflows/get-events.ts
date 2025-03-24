@@ -1,4 +1,4 @@
-import { err, ok,Result, type ResultAsync } from "neverthrow";
+import { err, ok, Result, type ResultAsync } from "neverthrow";
 
 import { ValidationError } from "../../common/errors";
 import dayjs from "../../helpers/dayjs";

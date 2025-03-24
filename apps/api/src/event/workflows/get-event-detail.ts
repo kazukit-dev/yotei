@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { err, ok,type Result } from "neverthrow";
+import { err, ok, type Result } from "neverthrow";
 
 import type { ValidationError } from "../../common/errors";
 import type {} from "../objects/event/read";

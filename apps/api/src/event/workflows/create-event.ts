@@ -1,4 +1,4 @@
-import { err, type Ok, ok,Result } from "neverthrow";
+import { err, type Ok, ok, Result } from "neverthrow";
 
 import { ValidationError } from "../../common/errors";
 import { tuple } from "../../helpers/tuple";

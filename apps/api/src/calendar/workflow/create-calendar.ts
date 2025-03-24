@@ -1,4 +1,4 @@
-import { type Ok, ok,Result } from "neverthrow";
+import { type Ok, ok, Result } from "neverthrow";
 
 import { ValidationError } from "../../common/errors";
 import type { CalendarId } from "../../event/objects/id";
