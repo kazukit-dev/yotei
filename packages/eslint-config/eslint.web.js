@@ -1,22 +1,26 @@
-import react from "eslint-plugin-react";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import tailwind from "eslint-plugin-tailwindcss";
-import a11y from "eslint-plugin-jsx-a11y";
+import eslintPluginReact from "eslint-plugin-react";
+import eslintPluginTailwind from "eslint-plugin-tailwindcss";
+import eslintPluginJsxA11y from "eslint-plugin-jsx-a11y";
+import eslintPluginReactHooks from "eslint-plugin-react-hooks";
 
 import base from "./eslint.base.js";
 
 export default tseslint.config(
   base,
-  tailwind.configs["flat/recommended"],
+  eslintPluginTailwind.configs["flat/recommended"],
   {
     ignores: ["node_modules", "build", ".env"],
   },
   {
-    ...react.configs.flat.recommended,
-    ...react.configs.flat["jsx-runtime"],
+    ...eslintPluginReact.configs.flat.recommended,
+    ...eslintPluginReact.configs.flat["jsx-runtime"],
+    plugins: {
+      react: eslintPluginReact,
+    },
     rules: {
-      [react.rules["prop-types"]]: "off",
+      "react/prop-types": "off",
     },
   },
   {
@@ -30,7 +34,11 @@ export default tseslint.config(
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
   },
   {
-    ...a11y.flatConfigs.recommended,
+    ...eslintPluginJsxA11y.flatConfigs.recommended,
+    files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
+  },
+  {
+    ...eslintPluginReactHooks.configs["recommended-latest"],
     files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
   }
 );

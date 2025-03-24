@@ -1,7 +1,8 @@
 import tseslint from "typescript-eslint";
-import base from "./eslint.base.js";
 import globals from "globals";
-import security from "eslint-plugin-security";
+import eslintPluginSecurity from "eslint-plugin-security";
+
+import base from "./eslint.base.js";
 
 export default tseslint.config(
   base,
@@ -15,7 +16,7 @@ export default tseslint.config(
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
   },
   {
-    ...security.configs.recommended,
+    ...eslintPluginSecurity.configs.recommended,
   },
   {
     ignores: ["node_modules", "dist", ".env", ".wrangler"],
