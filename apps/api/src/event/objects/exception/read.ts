@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "neverthrow";
+import { err, ok,type Result } from "neverthrow";
 
 interface _Exception {
   target_date: Date;

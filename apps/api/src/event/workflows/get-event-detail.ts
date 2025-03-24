@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import { type Result, err, ok } from "neverthrow";
+import { err, ok,type Result } from "neverthrow";
+
 import type { ValidationError } from "../../common/errors";
 import type {} from "../objects/event/read";
 import { getRecurringDates } from "../objects/rrule/read";

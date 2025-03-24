@@ -1,5 +1,6 @@
 import type FullCalendar from "@fullcalendar/react";
 import { useRef } from "react";
+
 import { VIEW_TYPE, type ViewType } from "./adaptor";
 
 export const useCalendar = () => {

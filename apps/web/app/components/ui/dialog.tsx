@@ -1,8 +1,9 @@
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva,type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 import type * as React from "react";
 import {
   Button as AriaButton,
+  composeRenderProps,
   Dialog as AriaDialog,
   type DialogProps as AriaDialogProps,
   DialogTrigger as AriaDialogTrigger,
@@ -11,7 +12,6 @@ import {
   Modal as AriaModal,
   ModalOverlay as AriaModalOverlay,
   type ModalOverlayProps as AriaModalOverlayProps,
-  composeRenderProps,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";
@@ -22,7 +22,7 @@ const sheetVariants = cva(
   [
     "fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out",
     /* Entering */
-    "data-[entering]:duration-500 data-[entering]:anismate-in",
+    "data-[entering]:duration-500 data-[entering]:animate-in",
     /* Exiting */
     "data-[exiting]:duration-300  data-[exiting]:animate-out",
   ],
@@ -42,11 +42,7 @@ const sheetVariants = cva(
 
 const DialogTrigger = AriaDialogTrigger;
 
-const DialogOverlay = ({
-  className,
-  isDismissable = true,
-  ...props
-}: AriaModalOverlayProps) => (
+const DialogOverlay = ({ className, isDismissable = true, ...props }: AriaModalOverlayProps) => (
   <AriaModalOverlay
     isDismissable={isDismissable}
     className={composeRenderProps(className, (className) =>
@@ -90,10 +86,7 @@ const DialogContent = ({
     )}
     {...props}
   >
-    <AriaDialog
-      role={role}
-      className={cn(!side && "h-full gap-4", "h-full outline-none")}
-    >
+    <AriaDialog role={role} className={cn(!side && "h-full gap-4", "h-full outline-none")}>
       {composeRenderProps(children, (children, renderProps) => (
         <>
           {children}
@@ -112,28 +105,13 @@ const DialogContent = ({
   </AriaModal>
 );
 
-const DialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
-      className,
-    )}
-    {...props}
-  />
+const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
 );
 
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className,
-    )}
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
     {...props}
   />
 );
@@ -141,35 +119,23 @@ const DialogFooter = ({
 const DialogTitle = ({ className, ...props }: AriaHeadingProps) => (
   <AriaHeading
     slot="title"
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className,
-    )}
+    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
   />
 );
 
-const DialogDescription = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) => (
-  <p
-    className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
-      className,
-    )}
-    {...props}
-  />
+const DialogDescription = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
 );
 
 export {
   Dialog,
-  DialogOverlay,
-  DialogTrigger,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogFooter,
+  DialogHeader,
+  DialogOverlay,
   DialogTitle,
+  DialogTrigger,
 };
 export type { DialogContentProps };

@@ -1,4 +1,7 @@
+import { ChevronsUpDown } from "lucide-react";
 import type { ComponentProps } from "react";
+
+import { Button } from "./button";
 import {
   Combobox,
   ComboboxInput,
@@ -6,13 +9,10 @@ import {
   ComboboxListBox,
   ComboboxPopover,
 } from "./combobox";
-
-import { ChevronsUpDown } from "lucide-react";
-import { Button } from "./button";
 import { FieldGroup } from "./field";
 import {} from "./select";
 
-interface Props extends ComponentProps<typeof Combobox> {}
+type Props = ComponentProps<typeof Combobox>;
 
 const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const minutes = ["00", "15", "30", "45"] as const;

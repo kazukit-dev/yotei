@@ -1,4 +1,5 @@
-import { Result, err, ok } from "neverthrow";
+import { err, ok,Result } from "neverthrow";
+
 import { ValidationError } from "../../../common/errors";
 import { compare } from "../../../helpers/date";
 import { tuple } from "../../../helpers/tuple";

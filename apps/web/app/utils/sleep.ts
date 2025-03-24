@@ -1,3 +1,3 @@
-const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default sleep;

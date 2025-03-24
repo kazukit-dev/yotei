@@ -1,5 +1,6 @@
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
+
 import type { Event } from "~/models/event";
 import { format } from "~/utils/day";
 

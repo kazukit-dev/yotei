@@ -1,4 +1,5 @@
-import { ResultAsync, err, ok } from "neverthrow";
+import { err, ok,ResultAsync } from "neverthrow";
+
 import { DBError, EntityNotFound } from "../../common/errors";
 import type { DB } from "../../db";
 import type { EventDetail } from "../workflows/get-event-detail";

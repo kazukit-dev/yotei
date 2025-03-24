@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
 import { Result, ResultAsync } from "neverthrow";
+
 import { DBError } from "../../common/errors";
 import type {
+  createDBClient,
   EventExceptionSelectModel,
   EventSelectModel,
   RecurrenceRuleSelectModel,
-  createDBClient,
 } from "../../db";
 import { Event } from "../objects/event/read";
 import type { CalendarId } from "../objects/id";

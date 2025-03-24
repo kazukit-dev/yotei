@@ -1,7 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import type { BlankSchema } from "hono/types";
-import { Result, ok } from "neverthrow";
+import { ok, Result } from "neverthrow";
+
 import { ValidationError } from "../../common/errors";
 import { createDBClient } from "../../db";
 import { tuple } from "../../helpers/tuple";
@@ -146,7 +147,7 @@ app.get("/:eventId", zValidator("query", getEventDetailSchema), async (c) => {
   );
 
   return await preprocess.andThen(workflow).match(
-    ({ kind, ...event }) => {
+    ({ kind: _, ...event }) => {
       return c.json(event, 200);
     },
     (err) => {

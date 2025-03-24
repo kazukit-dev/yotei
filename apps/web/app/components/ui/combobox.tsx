@@ -2,14 +2,14 @@ import { ChevronsUpDown } from "lucide-react";
 import {
   ComboBox as AriaComboBox,
   type ComboBoxProps as AriaComboBoxProps,
+  composeRenderProps,
   Input as AriaInput,
   type InputProps as AriaInputProps,
   ListBox as AriaListBox,
   type ListBoxProps as AriaListBoxProps,
   type PopoverProps as AriaPopoverProps,
-  type ValidationResult as AriaValidationResult,
   Text,
-  composeRenderProps,
+  type ValidationResult as AriaValidationResult,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";
@@ -124,14 +124,14 @@ function JollyComboBox<T extends object>({
 }
 
 export {
-  ComboboxSection,
   Combobox,
-  ComboboxListBox,
-  ComboboxInput,
   ComboboxCollection,
-  ComboboxItem,
   ComboboxHeader,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxListBox,
   ComboboxPopover,
+  ComboboxSection,
   JollyComboBox,
 };
 export type { JollyComboBoxProps };

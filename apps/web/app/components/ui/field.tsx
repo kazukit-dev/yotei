@@ -1,7 +1,8 @@
 "use client";
 
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva,type VariantProps } from "class-variance-authority";
 import {
+  composeRenderProps,
   FieldError as AriaFieldError,
   type FieldErrorProps as AriaFieldErrorProps,
   Group as AriaGroup,
@@ -10,7 +11,6 @@ import {
   type LabelProps as AriaLabelProps,
   Text as AriaText,
   type TextProps as AriaTextProps,
-  composeRenderProps,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";
@@ -80,10 +80,10 @@ function FieldGroup({ className, variant, ...props }: GroupProps) {
 }
 
 export {
-  Label,
-  labelVariants,
+  FieldError,
   FieldGroup,
   fieldGroupVariants,
-  FieldError,
   FormDescription,
+  Label,
+  labelVariants,
 };

@@ -1,12 +1,5 @@
 {
-  "include": [
-    "env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "remix.config.js",
-    "app/api/events/schema.tx",
-    "../../calendars.$calendarId.events.new.tsx"
-  ],
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx", "remix.config.js"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@remix-run/node", "vite/client"],

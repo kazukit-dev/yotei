@@ -1,14 +1,15 @@
 import { and, eq, sql } from "drizzle-orm";
 import { ResultAsync } from "neverthrow";
+
 import { DBError } from "../../common/errors";
 import {
-  events,
-  type EventExceptionInsertModel,
-  type Transaction,
   buildConflictUpdateColumns,
   type createDBClient,
+  type EventExceptionInsertModel,
   eventExceptions,
+  events,
   recurrenceRule,
+  type Transaction,
 } from "../../db";
 import type { Event } from "../objects/event/write";
 

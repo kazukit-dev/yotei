@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
 import { ClockIcon, PencilIcon, Trash2Icon, XIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
+
 import type { EventDetail } from "~/models/event";
 import { format } from "~/utils/day";
+
 import { DialogContent, DialogOverlay, DialogTitle } from "../ui/dialog";
 import { AnimatePresence, MotionModal, MotionOverlay } from "./animation";
 
@@ -21,7 +23,7 @@ const IconWrapper: React.FC<PropsWithChildren<{ onClick?: () => void }>> = ({
   return (
     <button
       type="button"
-      className="p-3 hover:cursor-pointer rounded-full hover:bg-gray-500/20 transition duration-200"
+      className="rounded-full p-3 transition duration-200 hover:cursor-pointer hover:bg-gray-500/20"
       onClick={onClick}
     >
       {children}
@@ -41,12 +43,12 @@ export const EventDetailDialog: React.FC<Props> = ({
       <DialogOverlay isOpen={isOpen} onOpenChange={onOpenChange}>
         <MotionOverlay>
           <DialogContent
-            className="w-96 pt-2 pl-5 pr-2 pb-4"
+            className="w-96 pb-4 pl-5 pr-2 pt-2"
             closeButton={false}
           >
             {({ close }) => (
               <MotionModal>
-                <div className="flex justify-end items-center gap-1">
+                <div className="flex items-center justify-end gap-1">
                   <div>
                     <IconWrapper
                       onClick={() => {
@@ -90,7 +92,7 @@ const DetailContent: React.FC<{ event: EventDetail }> = ({ event }) => {
   const endDateFormat = isSameDate ? "HH:mm" : "YYYY/MM/DD HH:mm";
   return (
     <div>
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <ClockIcon size={20} />
         <div className="flex gap-1">
           <span>{format(event.start, "YYYY/MM/DD HH:mm")}</span>

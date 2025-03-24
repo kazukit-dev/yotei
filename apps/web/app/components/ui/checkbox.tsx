@@ -4,9 +4,9 @@ import {
   CheckboxGroup as AriaCheckboxGroup,
   type CheckboxGroupProps as AriaCheckboxGroupProps,
   type CheckboxProps as AriaCheckboxProps,
-  type ValidationResult as AriaValidationResult,
-  Text,
   composeRenderProps,
+  Text,
+  type ValidationResult as AriaValidationResult,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";

@@ -4,9 +4,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "test:api": "pnpm --filter ./apps/api test",
-    "dev:all": "pnpm --filter './apps/*' dev",
-    "biome:check": "pnpm --filter './apps/*' biome:check",
-    "biome": "pnpm --filter './apps/*' biome"
+    "dev:all": "pnpm --filter './apps/*' dev"
   },
   "keywords": [
     "time-blocker",
@@ -18,7 +16,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
     "only-allow": "^1.2.1"
   },
   "engines": {

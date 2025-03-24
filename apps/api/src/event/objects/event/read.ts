@@ -1,7 +1,8 @@
-import { Result, err, ok } from "neverthrow";
+import { err, ok, Result } from "neverthrow";
+
 import dayjs from "../../../helpers/dayjs";
 import { Exception, type UnvalidatedException } from "../exception/read";
-import { RRule, type UnvalidatedRRule, getRecurringDates } from "../rrule/read";
+import { getRecurringDates, RRule, type UnvalidatedRRule } from "../rrule/read";
 
 interface _Event {
   id: string;
@@ -47,7 +48,7 @@ export const Event = {
     const end = new Date(input.end);
 
     if (!input.is_recurring) {
-      const { exceptions, ...model } = input;
+      const model = input;
       return ok({
         ...model,
         start,

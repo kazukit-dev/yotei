@@ -1,4 +1,5 @@
 import type { Event, EventDetail } from "~/models/event";
+
 import type { EventDetailDto, EventDto } from "./type";
 
 export const toDomain = (dto: EventDto): Event => {

@@ -1,4 +1,4 @@
-import { type SQL, getTableColumns, sql } from "drizzle-orm";
+import { getTableColumns, type SQL, sql } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
@@ -12,7 +12,9 @@ export const buildConflictUpdateColumns = <
   const cls = getTableColumns(table);
   return columns.reduce(
     (acc, column) => {
+      // eslint-disable-next-line security/detect-object-injection
       const colName = cls[column].name;
+      // eslint-disable-next-line security/detect-object-injection
       acc[column] = sql.raw(`excluded.${colName}`);
       return acc;
     },

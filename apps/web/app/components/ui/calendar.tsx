@@ -15,13 +15,13 @@ import {
   CalendarHeaderCell as AriaCalendarHeaderCell,
   type CalendarHeaderCellProps as AriaCalendarHeaderCellProps,
   type CalendarProps as AriaCalendarProps,
+  composeRenderProps,
   type DateValue as AriaDateValue,
   Heading as AriaHeading,
   RangeCalendar as AriaRangeCalendar,
   type RangeCalendarProps as AriaRangeCalendarProps,
   RangeCalendarStateContext as AriaRangeCalendarStateContext,
   Text,
-  composeRenderProps,
   useLocale,
 } from "react-aria-components";
 
@@ -229,8 +229,8 @@ export {
   CalendarGridHeader,
   CalendarHeaderCell,
   CalendarHeading,
-  RangeCalendar,
   JollyCalendar,
   JollyRangeCalendar,
+  RangeCalendar,
 };
 export type { JollyCalendarProps, JollyRangeCalendarProps };

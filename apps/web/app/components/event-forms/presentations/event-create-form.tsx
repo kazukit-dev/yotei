@@ -1,6 +1,7 @@
 import { useFormMetadata } from "@conform-to/react";
 import dayjs from "dayjs";
 import { SelectValue } from "react-aria-components";
+
 import DatePicker from "~/components/form/date-picker";
 import { Form } from "~/components/form/form";
 import Select from "~/components/form/select";
@@ -16,6 +17,7 @@ import {
   SelectTrigger,
 } from "~/components/ui/select";
 import { UnderlinedInput } from "~/components/ui/textfield";
+
 import { type EventCreateSchema, eventCreateSchema } from "../schema2/create";
 
 interface Props {
@@ -95,7 +97,7 @@ const EventDatePicker = () => {
     <div className="flex flex-col gap-2">
       <Switch name="is_all_day">All Day</Switch>
 
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <div className="shrink">
           <fieldset>
             <legend className="sr-only">start</legend>

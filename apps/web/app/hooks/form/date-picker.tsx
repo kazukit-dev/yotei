@@ -2,8 +2,8 @@ import { type FieldMetadata, useInputControl } from "@conform-to/react";
 import {
   type CalendarDate,
   type CalendarDateTime,
-  type ZonedDateTime,
   parseDate,
+  type ZonedDateTime,
 } from "@internationalized/date";
 
 export const useDatePicker = (
@@ -28,7 +28,9 @@ export const useDatePicker = (
     onChange: (
       value: CalendarDate | CalendarDateTime | ZonedDateTime | null,
     ) => {
-      value && control.change(value.toString());
+      if (value) {
+        control.change(value.toString());
+      }
     },
     onOpenChange: (open: boolean) => {
       if (!open) {

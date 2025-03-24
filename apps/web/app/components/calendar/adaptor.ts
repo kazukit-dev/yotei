@@ -1,4 +1,5 @@
 import type { EventClickArg, EventInput } from "@fullcalendar/core/";
+
 import type { Event } from "~/models/event";
 import { format } from "~/utils/day";
 

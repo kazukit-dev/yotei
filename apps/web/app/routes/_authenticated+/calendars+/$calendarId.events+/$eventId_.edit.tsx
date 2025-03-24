@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 import {} from "lucide-react";
 import { Suspense, useEffect } from "react";
+
 import { getEventDetail, updateEvent } from "~/api/events";
 import type { UpdateEventInput } from "~/api/events/type";
 import { PatternSelectDialog } from "~/components/dialog/pattern-select-dialog";
@@ -100,7 +101,7 @@ export default function EventEditView() {
 
   return (
     <div className="flex justify-center">
-      <div className="flex flex-col pt-10 w-1/3 gap-7">
+      <div className="flex w-1/3 flex-col gap-7 pt-10">
         <h1 className="text-4xl font-bold">Edit event</h1>
         <Suspense fallback={<EventEditSkeleton />}>
           <Await resolve={promise}>
@@ -111,7 +112,7 @@ export default function EventEditView() {
                   defaultValue={toFormData(event)}
                   onSubmit={handleSubmit(event)}
                 />
-                <div className="flex gap-3 justify-end">
+                <div className="flex justify-end gap-3">
                   <Button
                     onPress={() => goBack()}
                     className="w-36"
@@ -147,20 +148,20 @@ export const clientAction = async ({
     const data = await request.json();
     await updateEvent(calendarId as string, eventId as string, data);
     return { ok: true };
-  } catch (e: unknown) {
+  } catch (_: unknown) {
     return { ok: false };
   }
 };
 
 const EventEditSkeleton = () => {
   return (
-    <div className="animate-pulse flex flex-col gap-4">
-      <div className="h-9 bg-gray-300 rounded" />
-      <div className="h-7 bg-gray-300 rounded" />
-      <div className="h-7 bg-gray-300 rounded" />
-      <div className="h-7 bg-gray-300 rounded" />
-      <div className="h-7 bg-gray-300 rounded" />
-      <div className="h-7 bg-gray-300 rounded" />
+    <div className="flex animate-pulse flex-col gap-4">
+      <div className="h-9 rounded bg-gray-300" />
+      <div className="h-7 rounded bg-gray-300" />
+      <div className="h-7 rounded bg-gray-300" />
+      <div className="h-7 rounded bg-gray-300" />
+      <div className="h-7 rounded bg-gray-300" />
+      <div className="h-7 rounded bg-gray-300" />
     </div>
   );
 };

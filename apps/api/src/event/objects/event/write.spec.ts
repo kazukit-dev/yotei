@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+
 import { Duration, type End, Start } from "../date";
 import { Exception, type ExceptionDate } from "../exception/write";
 import { CalendarId, EventId } from "../id";

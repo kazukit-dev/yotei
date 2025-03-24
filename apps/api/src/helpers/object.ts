@@ -4,6 +4,7 @@ export const omit = <O extends object, Keys extends keyof O>(
 ): Omit<O, Keys> => {
   const result = { ...data };
   for (const key of keys) {
+    // eslint-disable-next-line security/detect-object-injection
     delete result[key];
   }
   return result as Omit<O, Keys>;

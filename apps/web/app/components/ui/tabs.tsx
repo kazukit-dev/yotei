@@ -1,4 +1,5 @@
 import {
+  composeRenderProps,
   Tab as AriaTab,
   TabList as AriaTabList,
   type TabListProps as AriaTabListProps,
@@ -7,7 +8,6 @@ import {
   type TabProps as AriaTabProps,
   Tabs as AriaTabs,
   type TabsProps as AriaTabsProps,
-  composeRenderProps,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";
@@ -79,4 +79,4 @@ const TabPanel = ({ className, ...props }: AriaTabPanelProps) => (
   />
 );
 
-export { Tabs, TabList, TabPanel, Tab };
+export { Tab,TabList, TabPanel, Tabs };

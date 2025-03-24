@@ -1,14 +1,16 @@
 import { useFormMetadata } from "@conform-to/react";
+
 import DatePicker from "~/components/form/date-picker";
 import { Form } from "~/components/form/form";
 import { Switch } from "~/components/form/switch";
 import TextField from "~/components/form/text-field";
 import { TimePicker } from "~/components/form/time-picker";
 import { UnderlinedInput } from "~/components/ui/textfield";
+
 import {
   type EventEditFormSchema,
-  type ValidatedEventEditSchema,
   eventEditFormSchema,
+  type ValidatedEventEditSchema,
 } from "../schema2";
 
 interface Props {
@@ -24,7 +26,7 @@ export const EventEditForm: React.FC<Props> = ({
   id,
   defaultValue,
   onSubmit,
-  onCancel,
+  onCancel: _onCancel,
 }) => {
   return (
     <Form
@@ -42,7 +44,7 @@ export const EventEditForm: React.FC<Props> = ({
       }}
     >
       <div className="flex flex-col gap-20">
-        <div className="flex flex-col gap5">
+        <div className="flex flex-col gap-5">
           <EventFormContainer />
         </div>
       </div>
@@ -74,7 +76,7 @@ const EventDatePicker = () => {
     <div className="flex flex-col gap-2">
       <Switch name="is_all_day">All Day</Switch>
 
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <div className="shrink">
           <fieldset>
             <legend className="sr-only">start</legend>
@@ -136,9 +138,7 @@ const EventDatePicker = () => {
           </fieldset>
         </div>
       </div>
-      {fields.start.errors && (
-        <p className="text-red-700">{fields.start.errors}</p>
-      )}
+      {fields.start.errors && <p className="text-red-700">{fields.start.errors}</p>}
     </div>
   );
 };

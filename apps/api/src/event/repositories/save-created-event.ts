@@ -1,12 +1,13 @@
 import { ResultAsync } from "neverthrow";
+
 import { DBError } from "../../common/errors";
 import {
-  events,
+  type createDBClient,
   type EventInsertModel,
+  events,
+  recurrenceRule,
   type RecurrenceRuleInsertModel,
   type Transaction,
-  type createDBClient,
-  recurrenceRule,
 } from "../../db";
 import type { Event } from "../objects/event/write";
 

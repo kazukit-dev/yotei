@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+
 import { Exception } from "./read";
 
 describe("Exceptions", () => {

@@ -1,9 +1,11 @@
 import {
+  useQuery,
   type UseQueryOptions,
   type UseQueryResult,
-  useQuery,
 } from "@tanstack/react-query";
+
 import type { EventDetail } from "~/models/event";
+
 import { eventKey } from "./cache";
 import { fetchEventById } from "./function";
 import { toEventDetailDomain } from "./transform";

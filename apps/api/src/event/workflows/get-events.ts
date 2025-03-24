@@ -1,10 +1,11 @@
-import { Result, type ResultAsync, err, ok } from "neverthrow";
+import { err, ok,Result, type ResultAsync } from "neverthrow";
+
 import { ValidationError } from "../../common/errors";
 import dayjs from "../../helpers/dayjs";
 import {
   type Event,
-  type Occurrence,
   getOccurrences,
+  type Occurrence,
 } from "../objects/event/read";
 import { CalendarId } from "../objects/id";
 

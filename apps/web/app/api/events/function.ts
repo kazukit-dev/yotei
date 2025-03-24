@@ -1,5 +1,6 @@
 import { API_URL } from "~/config";
 import type { Event } from "~/models/event";
+
 import client from "../client";
 import { ApiError } from "../error";
 import type {

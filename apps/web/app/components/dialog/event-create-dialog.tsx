@@ -30,7 +30,7 @@ export const EventCreateDialog: React.FC<Props> = ({
             {({ close }) => (
               <MotionModal>
                 <DialogTitle className="text-xl">Add Event</DialogTitle>
-                <div className="py-4 min-w-[500px]">
+                <div className="min-w-[500px] py-4">
                   <EventCreateForm id="event-create-form" onSubmit={onSubmit} />
                 </div>
                 <DialogFooter className="flex items-center justify-end gap-3">

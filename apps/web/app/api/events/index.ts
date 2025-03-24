@@ -1,4 +1,5 @@
 import type { Event, EventDetail } from "~/models/event";
+
 import {
   getEventDetailCache,
   getEventListCache,
@@ -8,10 +9,10 @@ import {
   setEventListCache,
 } from "./cache";
 import {
-  updateEvent as _updateEvent,
   createEvent,
   fetchEventById,
   fetchEvents,
+  updateEvent as _updateEvent,
 } from "./function";
 import { toDomain, toEventDetailDomain } from "./transform";
 import type { CreateEventInput, UpdateEventInput } from "./type";

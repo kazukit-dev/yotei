@@ -1,6 +1,7 @@
 import type { ClientLoaderFunctionArgs } from "@remix-run/react";
 import dayjs from "dayjs";
 import { z } from "zod";
+
 import { getEvents } from "~/api/events";
 
 export const _clientLoader = async ({

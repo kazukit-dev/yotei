@@ -1,5 +1,7 @@
 import { z } from "zod";
+
 import { compare } from "~/utils/day";
+
 import {
   checkboxSchema,
   dateTimeSchema,
@@ -31,9 +33,6 @@ export const eventCreateSchema = z
     end: dateTimeSchema,
     is_all_day: checkboxSchema,
     rrule: rruleSchema,
-  })
-  .refine(({ start, end }) => {
-    return true;
   })
   .refine(({ start, end, is_all_day }) =>
     validateDateRange(start, end, is_all_day),

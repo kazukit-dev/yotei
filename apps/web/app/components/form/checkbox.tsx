@@ -1,6 +1,8 @@
 import { type FieldName, useField } from "@conform-to/react";
 import type { ComponentProps } from "react";
+
 import { useCheckboxForm } from "~/hooks/form/checkbox";
+
 import { Checkbox as _Checkbox } from "../ui/checkbox";
 
 interface Props extends ComponentProps<typeof _Checkbox> {

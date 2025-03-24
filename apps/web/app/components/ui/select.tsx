@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,
+  composeRenderProps,
   ListBox as AriaListBox,
   type ListBoxProps as AriaListBoxProps,
   type PopoverProps as AriaPopoverProps,
@@ -9,9 +10,8 @@ import {
   type SelectProps as AriaSelectProps,
   SelectValue as AriaSelectValue,
   type SelectValueProps as AriaSelectValueProps,
-  type ValidationResult as AriaValidationResult,
   Text,
-  composeRenderProps,
+  type ValidationResult as AriaValidationResult,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";
@@ -144,15 +144,15 @@ function JollySelect<T extends object>({
 }
 
 export {
-  Select,
-  SelectValue,
-  SelectTrigger,
-  SelectItem,
-  SelectPopover,
-  SelectHeader,
-  SelectListBox,
-  SelectSection,
-  SelectCollection,
   JollySelect,
+  Select,
+  SelectCollection,
+  SelectHeader,
+  SelectItem,
+  SelectListBox,
+  SelectPopover,
+  SelectSection,
+  SelectTrigger,
+  SelectValue,
 };
 export type { JollySelectProps };

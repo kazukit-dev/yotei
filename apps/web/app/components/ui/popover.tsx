@@ -1,10 +1,10 @@
 import {
+  composeRenderProps,
   Dialog as AriaDialog,
   type DialogProps as AriaDialogProps,
   DialogTrigger as AriaDialogTrigger,
   Popover as AriaPopover,
   type PopoverProps as AriaPopoverProps,
-  composeRenderProps,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";
@@ -36,4 +36,4 @@ function PopoverDialog({ className, ...props }: AriaDialogProps) {
   );
 }
 
-export { Popover, PopoverTrigger, PopoverDialog };
+export { Popover, PopoverDialog,PopoverTrigger };

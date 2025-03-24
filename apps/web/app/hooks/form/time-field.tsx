@@ -1,9 +1,9 @@
 import { type FieldMetadata, useInputControl } from "@conform-to/react";
 import {
   type CalendarDateTime,
+  parseTime,
   type Time,
   type ZonedDateTime,
-  parseTime,
 } from "@internationalized/date";
 
 export const useTimeField = (
@@ -19,7 +19,9 @@ export const useTimeField = (
       : null,
     value: control.value ? parseTime(control.value) : null,
     onChange: (value: Time | CalendarDateTime | ZonedDateTime | null) => {
-      value && control.change(value.toString());
+      if (value) {
+        control.change(value.toString());
+      }
     },
   };
 };

@@ -1,10 +1,11 @@
-export * from "./schema";
-export * from "./helper";
-import { type PostgresJsDatabase, drizzle } from "drizzle-orm/postgres-js";
+import { DefaultLogger } from "drizzle-orm";
+import { drizzle,type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+
 import * as schema from "./schema";
 
-import { DefaultLogger } from "drizzle-orm";
+export * from "./helper";
+export * from "./schema";
 
 export type DB = PostgresJsDatabase<typeof schema>;
 

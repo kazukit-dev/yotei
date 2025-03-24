@@ -7,7 +7,7 @@ import {
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import type { PropsWithChildren } from "react";
 import { Form as RACForm } from "react-aria-components";
-import type { ZodAny, ZodSchema, z } from "zod";
+import type { z,ZodAny, ZodSchema } from "zod";
 
 interface FormProps<Schema extends ZodSchema> {
   id?: string;

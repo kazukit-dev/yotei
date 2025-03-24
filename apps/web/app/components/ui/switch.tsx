@@ -1,7 +1,7 @@
 import {
+  composeRenderProps,
   Switch as AriaSwitch,
   type SwitchProps as AriaSwitchProps,
-  composeRenderProps,
 } from "react-aria-components";
 
 import { cn } from "~/libs/utils";

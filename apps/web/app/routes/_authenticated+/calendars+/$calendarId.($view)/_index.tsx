@@ -5,11 +5,13 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { useState } from "react";
+
 import _Calendar, { type ViewType } from "~/components/calendar";
 import { EventCreateDialog } from "~/components/dialog/event-create-dialog";
 import { EventDetailDialog } from "~/components/dialog/event-detail-dialog";
 import type { Event, EventDetail } from "~/models/event";
 import { format } from "~/utils/day";
+
 import { _clientAction } from "./action";
 import { _clientLoader } from "./loader";
 
@@ -96,7 +98,7 @@ export default function Calendar() {
         <EventDetailDialog
           isOpen={true}
           event={selectedEvent}
-          onOpenChange={(isOpen) => {
+          onOpenChange={() => {
             setSelectedEvent(null);
           }}
           onEdit={handleEdit}

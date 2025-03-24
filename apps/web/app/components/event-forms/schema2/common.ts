@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { compare } from "~/utils/day";
 
 export const titleSchema = z.string().min(1);

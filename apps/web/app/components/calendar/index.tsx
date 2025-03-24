@@ -2,8 +2,10 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { forwardRef } from "react";
+
 import type { Event } from "~/models/event";
-import { VIEW_TYPE, type ViewType, clickEvent, convertEvent } from "./adaptor";
+
+import { clickEvent, convertEvent,VIEW_TYPE, type ViewType } from "./adaptor";
 import { Header } from "./header";
 import { useCalendar } from "./hook";
 
@@ -39,7 +41,7 @@ const Calendar = forwardRef<unknown, Props>(
       onChangeView,
       onAddEvent,
     },
-    ref,
+    _ref,
   ) => {
     const initialView = VIEW_TYPE[view];
     const fullCalendarEvents = events.map(convertEvent);

@@ -1,4 +1,5 @@
-import { type Ok, Result, err, ok } from "neverthrow";
+import { err, type Ok, ok,Result } from "neverthrow";
+
 import { ValidationError } from "../../common/errors";
 import { tuple } from "../../helpers/tuple";
 import { Duration, type End, type Start, toDates } from "../objects/date";

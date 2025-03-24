@@ -5,6 +5,7 @@ import {
   LoaderCircleIcon,
   PlusIcon,
 } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
 import { Toggle, ToggleButtonGroup } from "~/components/ui/toggle";
 import { format } from "~/utils/day";
@@ -46,24 +47,24 @@ export const Header: React.FC<Props> = ({
     view === "week" ? format(date, "YYYY/MM/DD") : format(date, "YYYY/MM");
 
   return (
-    <div className="relative flex justify-between items-center">
-      <div className="flex gap-4 items-center justify-start">
+    <div className="relative flex items-center justify-between">
+      <div className="flex items-center justify-start gap-4">
         <Button type="button" variant="outline" onPress={handleToday}>
           Today
         </Button>
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           <button
             type="button"
-            className="relative flex items-center justify-center size-10 rounded-full 
-                 hover:bg-gray-400/30 transition duration-300"
+            className="relative flex size-10 items-center justify-center rounded-full 
+                 transition duration-300 hover:bg-gray-400/30"
             onClick={handlePrev(view)}
           >
             <ChevronLeftIcon />
           </button>
           <button
             type="button"
-            className="relative flex items-center justify-center size-10 rounded-full 
-                 hover:bg-gray-400/30 transition duration-300"
+            className="relative flex size-10 items-center justify-center rounded-full 
+                 transition duration-300 hover:bg-gray-400/30"
             onClick={handleNext(view)}
           >
             <ChevronRightIcon />
@@ -81,7 +82,7 @@ export const Header: React.FC<Props> = ({
 
       <div className="absolute left-1/2 -translate-x-1/2">
         <ToggleButtonGroup
-          className="border rounded-lg border-gray-200 p-0.5 w-64 h-10"
+          className="h-10 w-64 rounded-lg border border-gray-200 p-0.5"
           disallowEmptySelection
           selectedKeys={[view]}
           onSelectionChange={(key) => {
@@ -90,14 +91,14 @@ export const Header: React.FC<Props> = ({
           }}
         >
           <Toggle
-            className="data-[selected]:bg-black data-[selected]:text-white border-none w-full h-8"
+            className="h-8 w-full border-none data-[selected]:bg-black data-[selected]:text-white"
             variant="outline"
             id="week"
           >
             Week
           </Toggle>
           <Toggle
-            className="data-[selected]:bg-black data-[selected]:text-white border-none w-full h-8"
+            className="h-8 w-full border-none data-[selected]:bg-black data-[selected]:text-white"
             variant="outline"
             id="month"
           >

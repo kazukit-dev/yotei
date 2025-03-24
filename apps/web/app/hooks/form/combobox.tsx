@@ -9,10 +9,14 @@ export const useCombobox = (meta: FieldMetadata<string>) => {
     selectedKey: control.value ? control.value : null,
     inputValue: control.value ? control.value : "",
     onSelectionChange: (key: Key | null) => {
-      key && control.change(key.toString());
+      if (key) {
+        control.change(key.toString());
+      }
     },
     onInputChange: (value: string) => {
-      value && control.change(value);
+      if (value) {
+        control.change(value);
+      }
     },
     onOpenChange: (open: boolean) => {
       if (!open) {
