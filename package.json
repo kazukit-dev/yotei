@@ -4,7 +4,9 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "test:api": "pnpm --filter ./apps/api test",
-    "dev:all": "pnpm --filter './apps/*' dev"
+    "dev:all": "pnpm --filter './apps/*' dev",
+    "lint:all": "pnpm --filter './apps/*' lint:fix",
+    "format:all": "pnpm --filter './apps/*' format:fix"
   },
   "keywords": [
     "time-blocker",
