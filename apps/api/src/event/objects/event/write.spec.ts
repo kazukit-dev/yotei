@@ -207,7 +207,7 @@ describe("updateEvent", () => {
             pattern: OPERATION_PATTERN.THIS,
           };
 
-          const result = deleteEvent(input)(singleEvent);
+          const result = deleteEvent(singleEvent, input);
           expect(result.isOk()).toBe(true);
           expect(result._unsafeUnwrap()).toEqual({
             id: singleEvent.id,
@@ -224,7 +224,7 @@ describe("updateEvent", () => {
               pattern: OPERATION_PATTERN.THIS,
             };
 
-            const result = deleteEvent(input)(recurringEventWithException);
+            const result = deleteEvent(recurringEventWithException, input);
             expect(result.isOk()).toBe(true);
 
             const updatedEvent = result._unsafeUnwrap();
@@ -246,7 +246,7 @@ describe("updateEvent", () => {
               pattern: OPERATION_PATTERN.FUTURE,
             };
 
-            const result = deleteEvent(input)(recurringEventWithException);
+            const result = deleteEvent(recurringEventWithException, input);
             expect(result.isOk()).toBe(true);
 
             const updatedEvent = result._unsafeUnwrap();
@@ -255,7 +255,7 @@ describe("updateEvent", () => {
               "rrule",
               expect.objectContaining({
                 ...recurringEventWithException.rrule,
-                until: input.target_date,
+                until: new Date(new Date(input.target_date).getTime() - 1),
               }),
             );
           });
@@ -268,7 +268,7 @@ describe("updateEvent", () => {
               pattern: OPERATION_PATTERN.ALL,
             };
 
-            const result = deleteEvent(input)(recurringEventWithException);
+            const result = deleteEvent(recurringEventWithException, input);
             expect(result.isOk()).toBe(true);
             expect(result._unsafeUnwrap()).toEqual({
               id: recurringEventWithException.id,
