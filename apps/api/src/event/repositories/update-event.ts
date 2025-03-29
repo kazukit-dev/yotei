@@ -53,6 +53,9 @@ export const upsert =
         .where(and(eq(recurrenceRule.event_id, rest.id)))
         .execute();
 
+      // NOTE: exceptionsが空の場合エラーが出る
+      if (!exceptions.length) return event;
+
       const exceptionModels: EventExceptionInsertModel[] = exceptions.map(
         (ex) => {
           return {

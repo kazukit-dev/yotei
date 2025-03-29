@@ -6,7 +6,7 @@ import dayjs from "../../helpers/dayjs";
 import { tuple } from "../../helpers/tuple";
 import { Duration, type End, type Start, toDates } from "../objects/date";
 import type { Event } from "../objects/event/write";
-import { updateEvent, UpdatePattern } from "../objects/event/write";
+import { OperationPattern, updateEvent } from "../objects/event/write";
 import { ExceptionDate } from "../objects/exception/write";
 import { getRecurringDates } from "../objects/rrule/read";
 import { Title } from "../objects/title";
@@ -42,7 +42,7 @@ type ValidatedInput = {
 type ValidatedCommand = {
   input: ValidatedInput;
   kind: "validated";
-  pattern: UpdatePattern;
+  pattern: OperationPattern;
   event: Event;
 };
 
@@ -77,7 +77,7 @@ const validate: Validate = ({ input, event }) => {
   const dates = toDates({ start: input.start, end: input.end });
   const duration = dates.andThen(Duration.create);
   const targetDate = toExceptionDate(event, input.target_date);
-  const pattern = UpdatePattern.create(input.pattern);
+  const pattern = OperationPattern.create(input.pattern);
 
   const values = Result.combineWithAllErrors(
     tuple(title, dates, duration, targetDate, pattern),

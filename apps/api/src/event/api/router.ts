@@ -8,15 +8,20 @@ import { createDBClient } from "../../db";
 import { tuple } from "../../helpers/tuple";
 import { CalendarId, EventId } from "../objects/id";
 import { getEventDetail } from "../query-service/get-event-detail";
+import { deleteEvent } from "../repositories/delete-event";
 import { getEventById } from "../repositories/get-event";
 import { getEvents } from "../repositories/query-events";
 import { create, saveCreatedEvent } from "../repositories/save-created-event";
 import { transaction } from "../repositories/transaction";
-import { upsert } from "../repositories/update-event";
+import { updateEvent, upsert } from "../repositories/update-event";
 import {
   createEventWorkflow,
   toUnvalidatedEvent,
 } from "../workflows/create-event";
+import {
+  deleteEventWorkflow,
+  toUnvalidatedDeleteCommand,
+} from "../workflows/delete-event";
 import { getEventDetailWorkflow } from "../workflows/get-event-detail";
 import {
   createQueryWorkflow,
@@ -28,6 +33,7 @@ import {
 } from "../workflows/update-event";
 import {
   createEventSchema,
+  deleteEventSchema,
   getEventDetailSchema,
   getEventsSchema,
   updateEventSchema,
@@ -154,6 +160,45 @@ app.get("/:eventId", zValidator("query", getEventDetailSchema), async (c) => {
       throw err;
     },
   );
+});
+
+app.delete("/:eventId", zValidator("json", deleteEventSchema), async (c) => {
+  const db = createDBClient(c.env.DATABASE_URL);
+  const params = c.req.param();
+  const { pattern, target_date } = c.req.valid("json");
+
+  const calendarId = CalendarId.create(params.calendarId);
+  const eventId = EventId.create(params.eventId);
+  const values = Result.combineWithAllErrors(tuple(calendarId, eventId)).mapErr(
+    (errors) => new ValidationError(errors),
+  );
+
+  const process = values
+    .asyncAndThen(([calendarId, eventId]) =>
+      getEventById(db)(calendarId, eventId),
+    )
+    .map((event) =>
+      toUnvalidatedDeleteCommand({ event, target_date, pattern }),
+    );
+
+  return await process
+    .andThen(deleteEventWorkflow)
+    .andThen(({ event, affected_range }) => {
+      switch (event.kind) {
+        case "deleted":
+          return deleteEvent(db)(event).andThen(() => ok({ affected_range }));
+        case "updated":
+          return updateEvent(db)(event).andThen(() => ok({ affected_range }));
+      }
+    })
+    .match(
+      (result) => {
+        return c.json(result, 200);
+      },
+      (err) => {
+        throw err;
+      },
+    );
 });
 
 export default app;

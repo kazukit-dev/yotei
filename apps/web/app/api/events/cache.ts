@@ -11,21 +11,30 @@ export type Filters = {
 export const eventKey = {
   all: (calendarId: string) => ["calendars", calendarId, "events"] as const,
   lists: (calendarId: string) => [...eventKey.all(calendarId), "list"] as const,
-  list: (calendarId: string, filters: Filters) => [...eventKey.lists(calendarId), filters] as const,
+  list: (calendarId: string, filters: Filters) =>
+    [...eventKey.lists(calendarId), filters] as const,
   details: (calendarId: string) => [...eventKey.all(calendarId), "detail"],
   detail: (calendarId: string, eventId: string, date?: string) => {
-    const key = [...eventKey.details(calendarId), eventId, date ? date : null] as const;
-    return key;
+    return date
+      ? [...eventKey.details(calendarId), eventId, date]
+      : [...eventKey.details(calendarId), eventId];
   },
 } as const;
 
-export const getEventListCache = (calendarId: string, filters: Filters): Event[] | null => {
+export const getEventListCache = (
+  calendarId: string,
+  filters: Filters,
+): Event[] | null => {
   const cacheKey = eventKey.list(calendarId, filters);
   const cache = queryClient.getQueryData(cacheKey);
   return cache as Event[] | null;
 };
 
-export const setEventListCache = (calendarId: string, filters: Filters, data: Event[]) => {
+export const setEventListCache = (
+  calendarId: string,
+  filters: Filters,
+  data: Event[],
+) => {
   const cacheKey = eventKey.list(calendarId, filters);
   queryClient.setQueryData(cacheKey, data);
 };
@@ -59,7 +68,8 @@ const inRange = (
   return (
     dayjs(from).isBefore(eventRange.end) ||
     dayjs(eventRange.start).isBefore(to) ||
-    (dayjs(eventRange.start).isBefore(from) && dayjs(to).isBefore(eventRange.end))
+    (dayjs(eventRange.start).isBefore(from) &&
+      dayjs(to).isBefore(eventRange.end))
   );
 };
 
@@ -74,8 +84,15 @@ export const getEventDetailCache = (
   return cache as EventDetail;
 };
 
-export const setEventDetailCache = (calendarId: string, data: EventDetail): void => {
-  const cacheKey = eventKey.detail(calendarId, data.id, data.start.toISOString());
+export const setEventDetailCache = (
+  calendarId: string,
+  data: EventDetail,
+): void => {
+  const cacheKey = eventKey.detail(
+    calendarId,
+    data.id,
+    data.start.toISOString(),
+  );
   queryClient.setQueryData(cacheKey, data);
 };
 

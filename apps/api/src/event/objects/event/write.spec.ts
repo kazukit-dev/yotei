@@ -5,7 +5,12 @@ import { Exception, type ExceptionDate } from "../exception/write";
 import { CalendarId, EventId } from "../id";
 import { RRule, Until } from "../rrule/write";
 import { Title } from "../title";
-import { type Event, updateEvent } from "./write";
+import {
+  deleteEvent,
+  type Event,
+  OPERATION_PATTERN,
+  updateEvent,
+} from "./write";
 
 const singleEvent = {
   id: "1" as EventId,
@@ -192,6 +197,85 @@ describe("updateEvent", () => {
             is_all_day: input.is_all_day,
           }),
         );
+      });
+    });
+    describe("deleteEvent", () => {
+      describe("Single Event", () => {
+        test("should delete a single event", () => {
+          const input = {
+            target_date: new Date("2023-01-01") as ExceptionDate,
+            pattern: OPERATION_PATTERN.THIS,
+          };
+
+          const result = deleteEvent(input)(singleEvent);
+          expect(result.isOk()).toBe(true);
+          expect(result._unsafeUnwrap()).toEqual({
+            id: singleEvent.id,
+            kind: "deleted",
+          });
+        });
+      });
+
+      describe("Recurring Event", () => {
+        describe("Pattern: this", () => {
+          test("should add a cancelled exception for the target date", () => {
+            const input = {
+              target_date: new Date("2023-01-08") as ExceptionDate,
+              pattern: OPERATION_PATTERN.THIS,
+            };
+
+            const result = deleteEvent(input)(recurringEventWithException);
+            expect(result.isOk()).toBe(true);
+
+            const updatedEvent = result._unsafeUnwrap();
+            expect(updatedEvent).toHaveProperty("kind", "updated");
+            expect(updatedEvent).toHaveProperty("exceptions", [
+              ...recurringEventWithException.exceptions,
+              {
+                target_date: input.target_date,
+                type: "cancelled",
+              },
+            ]);
+          });
+        });
+
+        describe("Pattern: future", () => {
+          test("should update the recurring event's rrule until the target date", () => {
+            const input = {
+              target_date: new Date("2023-01-06") as ExceptionDate,
+              pattern: OPERATION_PATTERN.FUTURE,
+            };
+
+            const result = deleteEvent(input)(recurringEventWithException);
+            expect(result.isOk()).toBe(true);
+
+            const updatedEvent = result._unsafeUnwrap();
+            expect(updatedEvent).toHaveProperty("kind", "updated");
+            expect(updatedEvent).toHaveProperty(
+              "rrule",
+              expect.objectContaining({
+                ...recurringEventWithException.rrule,
+                until: input.target_date,
+              }),
+            );
+          });
+        });
+
+        describe("Pattern: all", () => {
+          test("should delete the entire recurring event", () => {
+            const input = {
+              target_date: new Date("2023-01-06") as ExceptionDate,
+              pattern: OPERATION_PATTERN.ALL,
+            };
+
+            const result = deleteEvent(input)(recurringEventWithException);
+            expect(result.isOk()).toBe(true);
+            expect(result._unsafeUnwrap()).toEqual({
+              id: recurringEventWithException.id,
+              kind: "deleted",
+            });
+          });
+        });
       });
     });
   });

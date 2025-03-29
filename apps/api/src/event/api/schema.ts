@@ -31,3 +31,8 @@ export const updateEventSchema = z.object({
 export const getEventDetailSchema = z.object({
   target_date: z.string().datetime().or(z.string().date()),
 });
+
+export const deleteEventSchema = z.object({
+  pattern: z.number(),
+  target_date: z.string().date().or(z.string().datetime()),
+});

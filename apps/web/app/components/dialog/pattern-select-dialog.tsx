@@ -13,9 +13,12 @@ import { PatternSelectForm } from "../event-forms/presentations/pattern-select-f
 import { Button } from "../ui/button";
 
 type DialogResponse = OperationPattern | null;
+type Props = {
+  title: string;
+};
 
-export const PatternSelectDialog = createCallable<void, DialogResponse>(
-  ({ call }) => (
+export const PatternSelectDialog = createCallable<Props, DialogResponse>(
+  ({ call, title }) => (
     <DialogOverlay
       isOpen
       onOpenChange={() => {
@@ -24,7 +27,7 @@ export const PatternSelectDialog = createCallable<void, DialogResponse>(
     >
       <DialogContent className="min-w-96">
         <DialogHeader>
-          <DialogTitle>Edit Recurring Event</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <div className="py-5">
           <PatternSelectForm

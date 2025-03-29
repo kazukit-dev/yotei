@@ -1,10 +1,11 @@
 import { API_URL } from "~/config";
-import type { Event } from "~/models/event";
+import type { Event, OperationPattern } from "~/models/event";
 
 import client from "../client";
 import { ApiError } from "../error";
 import type {
   CreateEventInput,
+  DeleteEventResponse,
   EventDetailDto,
   EventDto,
   UpdateEventInput,
@@ -60,4 +61,17 @@ export const updateEvent = async (
   if (!result.ok) {
     throw new ApiError("Failed to update event.", result.status);
   }
+};
+
+export const deleteEvent = async (
+  calendarId: string,
+  eventId: string,
+  data: { target_date: string; pattern: OperationPattern },
+): Promise<DeleteEventResponse> => {
+  const url = new URL(`/calendars/${calendarId}/events/${eventId}`, API_URL);
+  const result = await client.delete<DeleteEventResponse>(url, data);
+  if (!result.ok) {
+    throw new ApiError("Failed to delete event", result.status);
+  }
+  return result.data;
 };

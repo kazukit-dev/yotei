@@ -9,6 +9,7 @@ import { useState } from "react";
 import _Calendar, { type ViewType } from "~/components/calendar";
 import { EventCreateDialog } from "~/components/dialog/event-create-dialog";
 import { EventDetailDialog } from "~/components/dialog/event-detail-dialog";
+import { PatternSelectDialog } from "~/components/dialog/pattern-select-dialog";
 import type { Event, EventDetail } from "~/models/event";
 import { format } from "~/utils/day";
 
@@ -63,6 +64,26 @@ export default function Calendar() {
     setIsNewOpen(true);
   };
 
+  const handleDelete = async () => {
+    if (!selectedEvent) return;
+    const pattern = selectedEvent.is_recurring
+      ? await PatternSelectDialog.call({
+          title: "Delete Recurring Event",
+        })
+      : 0;
+    if (pattern === null) return;
+    submit(
+      {
+        intent: "delete",
+        target_date: selectedEvent.start.toISOString(),
+        eventId: selectedEvent.id,
+        pattern,
+      },
+      { method: "DELETE", encType: "application/json" },
+    );
+    setSelectedEvent(null);
+  };
+
   return (
     <>
       <div className="p-5">
@@ -102,8 +123,11 @@ export default function Calendar() {
             setSelectedEvent(null);
           }}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       ) : null}
+
+      <PatternSelectDialog.Root />
     </>
   );
 }

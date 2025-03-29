@@ -81,7 +81,7 @@ export default function EventEditView() {
       is_all_day: boolean;
     }) => {
       const pattern = event.is_recurring
-        ? await PatternSelectDialog.call()
+        ? await PatternSelectDialog.call({ title: "Edit Recurring Event" })
         : OPERATION_PATTERN.this;
       if (pattern === null) return;
       editEvent({

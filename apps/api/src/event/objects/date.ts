@@ -32,7 +32,7 @@ export const Duration = {
     return ok(diff as Duration);
   },
   from: (value: number): Result<Duration, "InvalidDuration"> => {
-    if (value <= 0) {
+    if (value < 0) {
       return err("InvalidDuration");
     }
     return ok(value as Duration);

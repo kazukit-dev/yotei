@@ -1,4 +1,4 @@
-import type { Event, EventDetail } from "~/models/event";
+import type { Event, EventDetail, OperationPattern } from "~/models/event";
 
 import {
   getEventDetailCache,
@@ -10,6 +10,7 @@ import {
 } from "./cache";
 import {
   createEvent,
+  deleteEvent as _deleteEvent,
   fetchEventById,
   fetchEvents,
   updateEvent as _updateEvent,
@@ -64,5 +65,19 @@ export const updateEvent = async (
 ) => {
   await _updateEvent(calendarId, eventId, data);
   removeEventListCache(calendarId, { start: data.start, end: data.end });
-  removeEventDetailCache(calendarId, eventId, data.target_date);
+  removeEventDetailCache(calendarId, eventId);
+};
+
+export const deleteEvent = async (
+  calendarId: string,
+  eventId: string,
+  data: {
+    target_date: string;
+    pattern: OperationPattern;
+  },
+) => {
+  const { affected_range } = await _deleteEvent(calendarId, eventId, data);
+
+  removeEventListCache(calendarId, affected_range);
+  removeEventDetailCache(calendarId, eventId);
 };

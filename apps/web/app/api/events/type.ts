@@ -55,3 +55,11 @@ export interface EventDetailDto {
   };
   version: number;
 }
+
+export type AffectedDateRange = {
+  start: string;
+  end: string;
+};
+export type DeleteEventResponse = {
+  affected_range: AffectedDateRange;
+};

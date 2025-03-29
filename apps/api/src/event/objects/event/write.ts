@@ -139,7 +139,7 @@ type CreatedEvent<T = Event> = T & { kind: "created" };
 type UpdatedEvent<T = Event> = T & { kind: "updated" };
 
 export const updateEvent =
-  (input: UpdateInput, pattern: UpdatePattern) =>
+  (input: UpdateInput, pattern: OperationPattern) =>
   (
     event: Event,
   ): Result<{ update: UpdatedEvent; create?: CreatedEvent }, string> => {
@@ -180,16 +180,16 @@ type UpdateRecurringEvent<U = Event, C = Event> = (
 
 const recurringEventUpdater = (
   input: UpdateInput,
-  pattern: UpdatePattern,
+  pattern: OperationPattern,
 ): UpdateRecurringEvent => {
   switch (pattern) {
-    case UPDATE_PATTERN.THIS: {
+    case OPERATION_PATTERN.THIS: {
       return updateThisEvent(input);
     }
-    case UPDATE_PATTERN.FUTURE: {
+    case OPERATION_PATTERN.FUTURE: {
       return updateFutureEvent(input);
     }
-    case UPDATE_PATTERN.ALL: {
+    case OPERATION_PATTERN.ALL: {
       return updateAllEvent(input);
     }
   }
@@ -301,21 +301,21 @@ const updateAllEvent =
     return ok({ update: updatedEvent });
   };
 
-const UPDATE_PATTERN = {
+export const OPERATION_PATTERN = {
   THIS: 0,
   FUTURE: 1,
   ALL: 2,
 } as const;
 
-export type UpdatePattern =
-  (typeof UPDATE_PATTERN)[keyof typeof UPDATE_PATTERN];
-export const UpdatePattern = {
-  create: (value: number): Result<UpdatePattern, string> => {
-    const values: number[] = Object.values(UPDATE_PATTERN);
+export type OperationPattern =
+  (typeof OPERATION_PATTERN)[keyof typeof OPERATION_PATTERN];
+export const OperationPattern = {
+  create: (value: number): Result<OperationPattern, string> => {
+    const values: number[] = Object.values(OPERATION_PATTERN);
     if (!values.includes(value)) {
-      return err("InvalidUpdatePattern");
+      return err("InvalidOperationPattern");
     }
-    return ok(value as UpdatePattern);
+    return ok(value as OperationPattern);
   },
 };
 
@@ -326,4 +326,76 @@ type UpdateInput = {
   end: End;
   duration: Duration;
   is_all_day: boolean;
+};
+
+type DeletedEvent = { id: EventId; kind: "deleted" } | UpdatedEvent;
+
+export const deleteEvent = (
+  event: Event,
+  input: { target_date: ExceptionDate; pattern: OperationPattern },
+): Result<DeletedEvent, string> => {
+  if (!event.is_recurring) {
+    return ok({ id: event.id, kind: "deleted" });
+  }
+
+  switch (input.pattern) {
+    case OPERATION_PATTERN.THIS: {
+      const updatedEvent: UpdatedEvent = {
+        ...event,
+        exceptions: [
+          ...event.exceptions,
+          {
+            target_date: input.target_date,
+            type: "cancelled",
+          },
+        ],
+        kind: "updated",
+      };
+      return ok(updatedEvent);
+    }
+
+    case OPERATION_PATTERN.FUTURE: {
+      const _until = new Date(input.target_date).getTime() - 1;
+      return Until.create(_until).map((until) => {
+        return {
+          ...event,
+          rrule: {
+            ...event.rrule,
+            until,
+          },
+          kind: "updated",
+        };
+      });
+    }
+
+    case OPERATION_PATTERN.ALL: {
+      return ok({ id: event.id, kind: "deleted" });
+    }
+  }
+};
+
+// 編集・削除したときの影響範囲を算出する
+export const getAffectedRange = (
+  event: Event,
+  {
+    pattern,
+    target_date,
+  }: { pattern: OperationPattern; target_date: ExceptionDate },
+): { start: Date; end: Date } => {
+  if (!event.is_recurring) return { start: event.start, end: event.end };
+
+  switch (pattern) {
+    case OPERATION_PATTERN.THIS:
+      return {
+        start: target_date,
+        end: target_date,
+      };
+
+    case OPERATION_PATTERN.FUTURE:
+    case OPERATION_PATTERN.ALL:
+      return {
+        start: event.start,
+        end: event.rrule.until,
+      };
+  }
 };

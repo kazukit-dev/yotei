@@ -2,7 +2,7 @@ import type { ClientActionFunctionArgs } from "@remix-run/react";
 import dayjs from "dayjs";
 import { z } from "zod";
 
-import { createNewEvent } from "~/api/events";
+import { createNewEvent, deleteEvent } from "~/api/events";
 import type { EventCreateSchema } from "~/components/event-forms/schema2/create";
 import { FREQUENCY } from "~/models/event";
 
@@ -21,6 +21,12 @@ export const _clientAction = async ({
     case "add": {
       await createNewEvent(calendarId, toEventCreateData(data));
       break;
+    }
+    case "delete": {
+      await deleteEvent(calendarId, data.eventId, {
+        pattern: data.pattern,
+        target_date: data.target_date,
+      });
     }
     default:
       break;

@@ -98,6 +98,24 @@ const post = async <T = unknown, E = unknown>(
   return result;
 };
 
+const _delete = async <T = unknown, E = unknown>(
+  path: string | URL,
+  body?: Record<string, unknown>,
+  options?: {
+    headers?: Record<string, string>;
+  },
+): Promise<Result<T, E>> => {
+  const url = new URL(path);
+
+  const result = await request<T, E>(url, {
+    method: "DELETE",
+    body,
+    headers: options?.headers,
+  });
+
+  return result;
+};
+
 const put = async <T = unknown, E = unknown>(
   path: string | URL,
   body?: Record<string, unknown>,
@@ -120,4 +138,5 @@ export default {
   get,
   post,
   put,
+  delete: _delete,
 };
