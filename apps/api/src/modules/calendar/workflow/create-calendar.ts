@@ -1,9 +1,7 @@
 import { type Ok, ok, Result } from "neverthrow";
 
-import { ValidationError } from "../../common/errors";
+import { ValidationError } from "../../../shared/errors";
 import type { CalendarId } from "../../event/objects/id";
-import { tuple } from "../../helpers/tuple";
-import type {} from "../objects/calendar/write";
 import { generateCalendarId } from "../objects/id";
 import { Name } from "../objects/name";
 
@@ -42,9 +40,9 @@ export const toUnvalidatedCalendar = (input: {
 const validate: ValidateCalendar = (model) => {
   const name = Name.create(model.name);
 
-  return Result.combine(tuple(name))
-    .map(([name]) => ({ ...model, name, kind: "validated" }) as const)
-    .mapErr((e) => new ValidationError(e));
+  return name
+    .map((name) => ({ ...model, name, kind: "validated" }) as const)
+    .mapErr((e) => new ValidationError([e]));
 };
 
 const createCalendar: CreateCalendar = (model) => {

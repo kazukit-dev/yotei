@@ -1,9 +1,9 @@
 import { err, ok, Result } from "neverthrow";
 
-import { ValidationError } from "../../common/errors";
-import { compare } from "../../helpers/date";
-import dayjs from "../../helpers/dayjs";
-import { tuple } from "../../helpers/tuple";
+import { ValidationError } from "../../../shared/errors";
+import { compare } from "../../../shared/helpers/date";
+import dayjs from "../../../shared/helpers/dayjs";
+import { tuple } from "../../../shared/helpers/tuple";
 import { Duration, type End, type Start, toDates } from "../objects/date";
 import type { Event } from "../objects/event/write";
 import { OperationPattern, updateEvent } from "../objects/event/write";

@@ -2,9 +2,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-import { calendarRouter } from "./calendar";
 import { errorHandler } from "./error-handler";
-import { eventRouter } from "./event";
+import { calendarRouter } from "./modules/calendar";
+import { eventRouter } from "./modules/event";
 
 const app = new Hono();
 

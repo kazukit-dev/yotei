@@ -3,9 +3,9 @@ import { Hono } from "hono";
 import type { BlankSchema } from "hono/types";
 import { ok, Result } from "neverthrow";
 
-import { ValidationError } from "../../common/errors";
-import { createDBClient } from "../../db";
-import { tuple } from "../../helpers/tuple";
+import { createDBClient } from "../../../db";
+import { ValidationError } from "../../../shared/errors";
+import { tuple } from "../../../shared/helpers/tuple";
 import { CalendarId, EventId } from "../objects/id";
 import { getEventDetail } from "../query-service/get-event-detail";
 import { deleteEvent } from "../repositories/delete-event";

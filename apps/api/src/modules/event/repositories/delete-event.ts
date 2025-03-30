@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { ResultAsync } from "neverthrow";
 
-import { DBError } from "../../common/errors";
-import { createDBClient, events } from "../../db";
+import { createDBClient, events } from "../../../db";
+import { DBError } from "../../../shared/errors";
 import { EventId } from "../objects/id";
 
 type DeletedEvent = { id: EventId; kind: "deleted" };

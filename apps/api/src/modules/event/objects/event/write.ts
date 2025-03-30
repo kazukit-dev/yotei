@@ -1,8 +1,8 @@
 import { err, ok, Result } from "neverthrow";
 
-import { ValidationError } from "../../../common/errors";
-import { compare } from "../../../helpers/date";
-import { tuple } from "../../../helpers/tuple";
+import { ValidationError } from "../../../../shared/errors";
+import { compare } from "../../../../shared/helpers/date";
+import { tuple } from "../../../../shared/helpers/tuple";
 import { Duration, End, Start } from "../date";
 import {
   Exception,
@@ -256,7 +256,7 @@ const updateFutureEvent =
     });
     // 2. target_dateがstartの新たなevent
     const dtstart = Dtstart.create(input.target_date);
-    const futureEvent = Result.combine(tuple(dtstart)).map(([dtstart]) => {
+    const futureEvent = dtstart.map(([dtstart]) => {
       return {
         ...event,
         id: generateEventId(),

@@ -1,7 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { ResultAsync } from "neverthrow";
 
-import { DBError } from "../../common/errors";
 import {
   buildConflictUpdateColumns,
   type createDBClient,
@@ -10,7 +9,8 @@ import {
   events,
   recurrenceRule,
   type Transaction,
-} from "../../db";
+} from "../../../db";
+import { DBError } from "../../../shared/errors";
 import type { Event } from "../objects/event/write";
 
 type UpdatedEvent = Event & { kind: "updated" };

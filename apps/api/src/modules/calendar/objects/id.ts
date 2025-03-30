@@ -1,4 +1,4 @@
-import type { Brand } from "../../helpers/brand";
+import type { Brand } from "../../../shared/helpers/brand";
 
 export type CalendarId = Brand<string, "CalendarId">;
 

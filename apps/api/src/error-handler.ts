@@ -5,7 +5,7 @@ import {
   EntityNotFound,
   ForbiddenError,
   ValidationError,
-} from "./common/errors";
+} from "./shared/errors";
 
 export const errorHandler: ErrorHandler = (err, c) => {
   if (!(err instanceof AppError)) {

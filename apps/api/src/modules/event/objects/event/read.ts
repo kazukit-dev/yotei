@@ -1,6 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 
-import dayjs from "../../../helpers/dayjs";
+import dayjs from "../../../../shared/helpers/dayjs";
 import { Exception, type UnvalidatedException } from "../exception/read";
 import { getRecurringDates, RRule, type UnvalidatedRRule } from "../rrule/read";
 

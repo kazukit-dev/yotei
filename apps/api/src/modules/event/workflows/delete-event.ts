@@ -1,6 +1,6 @@
 import { Result } from "neverthrow";
 
-import { ValidationError } from "../../common/errors";
+import { ValidationError } from "../../../shared/errors";
 import {
   deleteEvent,
   Event,

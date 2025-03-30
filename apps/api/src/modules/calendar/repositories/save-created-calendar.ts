@@ -1,7 +1,7 @@
 import { ResultAsync } from "neverthrow";
 
-import { DBError } from "../../common/errors";
-import { calendars, type createDBClient } from "../../db";
+import { calendars, type createDBClient } from "../../../db";
+import { DBError } from "../../../shared/errors";
 import type { CreatedCalendar } from "../workflow/create-calendar";
 
 export const saveCreatedCalendar =
