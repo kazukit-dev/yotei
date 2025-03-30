@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 
 import type { Event } from "~/models/event";
 
-import { clickEvent, convertEvent,VIEW_TYPE, type ViewType } from "./adaptor";
+import { clickEvent, convertEvent, VIEW_TYPE, type ViewType } from "./adaptor";
 import { Header } from "./header";
 import { useCalendar } from "./hook";
 

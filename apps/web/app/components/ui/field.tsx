@@ -1,6 +1,6 @@
 "use client";
 
-import { cva,type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   composeRenderProps,
   FieldError as AriaFieldError,

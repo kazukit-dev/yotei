@@ -79,4 +79,4 @@ const TabPanel = ({ className, ...props }: AriaTabPanelProps) => (
   />
 );
 
-export { Tab,TabList, TabPanel, Tabs };
+export { Tab, TabList, TabPanel, Tabs };

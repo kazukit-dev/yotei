@@ -105,5 +105,5 @@ function JollyTextField({
   );
 }
 
-export { Input, JollyTextField, TextArea,TextField };
+export { Input, JollyTextField, TextArea, TextField };
 export type { JollyTextFieldProps };

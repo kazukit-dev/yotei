@@ -107,5 +107,5 @@ function JollyRadioGroup({
   );
 }
 
-export { JollyRadioGroup,Radio, RadioGroup };
+export { JollyRadioGroup, Radio, RadioGroup };
 export type { JollyRadioGroupProps };

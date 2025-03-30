@@ -1,4 +1,4 @@
-import { cva,type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   composeRenderProps,
   ToggleButton as AriaToggleButton,
@@ -81,5 +81,5 @@ const ToggleButtonGroup = ({
   </AriaToggleButtonGroup>
 );
 
-export { Toggle, ToggleButtonGroup,toggleVariants };
+export { Toggle, ToggleButtonGroup, toggleVariants };
 export type { ToggleProps };

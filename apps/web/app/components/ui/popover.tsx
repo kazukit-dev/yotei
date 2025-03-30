@@ -36,4 +36,4 @@ function PopoverDialog({ className, ...props }: AriaDialogProps) {
   );
 }
 
-export { Popover, PopoverDialog,PopoverTrigger };
+export { Popover, PopoverDialog, PopoverTrigger };

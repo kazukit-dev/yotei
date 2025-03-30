@@ -1,5 +1,5 @@
 "use client";
-import { cva,type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,

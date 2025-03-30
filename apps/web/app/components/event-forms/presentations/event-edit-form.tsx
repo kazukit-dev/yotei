@@ -138,7 +138,9 @@ const EventDatePicker = () => {
           </fieldset>
         </div>
       </div>
-      {fields.start.errors && <p className="text-red-700">{fields.start.errors}</p>}
+      {fields.start.errors && (
+        <p className="text-red-700">{fields.start.errors}</p>
+      )}
     </div>
   );
 };
