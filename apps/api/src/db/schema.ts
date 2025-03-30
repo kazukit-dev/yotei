@@ -86,9 +86,7 @@ export const eventExceptions = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => {
-    return {
-      pk: primaryKey({ columns: [table.event_id, table.target_date] }),
-    };
+    return [primaryKey({ columns: [table.event_id, table.target_date] })];
   },
 );
 
