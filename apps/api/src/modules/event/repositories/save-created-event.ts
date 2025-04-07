@@ -1,6 +1,5 @@
 import { ResultAsync } from "neverthrow";
 
-import { DBError } from "../../common/errors";
 import {
   type createDBClient,
   type EventInsertModel,
@@ -8,7 +7,8 @@ import {
   recurrenceRule,
   type RecurrenceRuleInsertModel,
   type Transaction,
-} from "../../db";
+} from "../../../db";
+import { DBError } from "../../../shared/errors";
 import type { Event } from "../objects/event/write";
 
 type CreatedEvent = Event & { kind: "created" };

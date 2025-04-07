@@ -1,7 +1,7 @@
 import { ResultAsync } from "neverthrow";
 
-import { DBError } from "../../common/errors";
-import type { createDBClient, Transaction } from "../../db";
+import type { createDBClient, Transaction } from "../../../db";
+import { DBError } from "../../../shared/errors";
 
 export const transaction =
   (client: ReturnType<typeof createDBClient>) =>

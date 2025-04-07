@@ -1,8 +1,8 @@
 import { and } from "drizzle-orm";
 import { err, ok, ResultAsync } from "neverthrow";
 
-import { DBError, EntityNotFound } from "../../common/errors";
-import type { createDBClient } from "../../db";
+import type { createDBClient } from "../../../db";
+import { DBError, EntityNotFound } from "../../../shared/errors";
 import { Event } from "../objects/event/write";
 import type { CalendarId, EventId } from "../objects/id";
 

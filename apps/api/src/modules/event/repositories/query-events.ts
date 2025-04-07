@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import { Result, ResultAsync } from "neverthrow";
 
-import { DBError } from "../../common/errors";
 import type {
   createDBClient,
   EventExceptionSelectModel,
   EventSelectModel,
   RecurrenceRuleSelectModel,
-} from "../../db";
+} from "../../../db";
+import { DBError } from "../../../shared/errors";
 import { Event } from "../objects/event/read";
 import type { CalendarId } from "../objects/id";
 import type { GetEvents } from "../workflows/get-events";

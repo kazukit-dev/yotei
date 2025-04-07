@@ -1,7 +1,7 @@
 import { err, ok, ResultAsync } from "neverthrow";
 
-import { DBError, EntityNotFound } from "../../common/errors";
-import type { DB } from "../../db";
+import type { DB } from "../../../db";
+import { DBError, EntityNotFound } from "../../../shared/errors";
 import type { EventDetail } from "../workflows/get-event-detail";
 
 const findEventDetail =

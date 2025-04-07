@@ -1,7 +1,7 @@
 import { err, ok, Result, type ResultAsync } from "neverthrow";
 
-import { ValidationError } from "../../common/errors";
-import dayjs from "../../helpers/dayjs";
+import { ValidationError } from "../../../shared/errors";
+import dayjs from "../../../shared/helpers/dayjs";
 import {
   type Event,
   getOccurrences,

@@ -256,7 +256,7 @@ const updateFutureEvent =
     });
     // 2. target_dateがstartの新たなevent
     const dtstart = Dtstart.create(input.target_date);
-    const futureEvent = dtstart.map(([dtstart]) => {
+    const futureEvent = dtstart.map((dtstart) => {
       return {
         ...event,
         id: generateEventId(),

@@ -1,7 +1,7 @@
 import { err, type Ok, ok, Result } from "neverthrow";
 
-import { ValidationError } from "../../common/errors";
-import { tuple } from "../../helpers/tuple";
+import { ValidationError } from "../../../shared/errors";
+import { tuple } from "../../../shared/helpers/tuple";
 import { Duration, type End, type Start, toDates } from "../objects/date";
 import type { Event } from "../objects/event/write";
 import { CalendarId, generateEventId } from "../objects/id";

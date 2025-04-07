@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { err, ok, Result } from "neverthrow";
 
-import type { Brand } from "../../../helpers/brand";
-import { compare } from "../../../helpers/date";
+import type { Brand } from "../../../../shared/helpers/brand";
+import { compare } from "../../../../shared/helpers/date";
 
 const FREQUENCIES = {
   YEARLY: 0,
