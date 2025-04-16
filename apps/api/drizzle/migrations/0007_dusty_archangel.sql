@@ -1,0 +1,1 @@
+ALTER TABLE "user_token" RENAME COLUMN "expired_at" TO "expires_at";

@@ -6,6 +6,7 @@ import * as schema from "./schema";
 
 export * from "./helper";
 export * from "./schema";
+export { PostgresError } from "postgres";
 
 export type DB = PostgresJsDatabase<typeof schema>;
 
@@ -19,3 +20,11 @@ export const createDBClient = (
 export type Transaction = Parameters<
   Parameters<ReturnType<typeof createDBClient>["transaction"]>[0]
 >[0];
+
+const CODE_UNIQUE_CONSTRAINT_ERROR = "23505";
+export const isUniqueConstraintError = (err: unknown) => {
+  return (
+    err instanceof postgres.PostgresError &&
+    err.code === CODE_UNIQUE_CONSTRAINT_ERROR
+  );
+};

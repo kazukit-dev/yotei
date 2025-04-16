@@ -18,6 +18,7 @@
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.41.0",
     "hono": "^4.7.5",
+    "jose": "^6.0.10",
     "neverthrow": "^8.2.0",
     "postgres": "^3.4.5",
     "react-aria-components": "^1.7.1",

@@ -4,6 +4,7 @@ import type { BlankSchema } from "hono/types";
 import { ok, Result } from "neverthrow";
 
 import { createDBClient } from "../../../db";
+import { transaction } from "../../../shared/db/transaction";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 import { CalendarId, EventId } from "../objects/id";
@@ -12,7 +13,6 @@ import { deleteEvent } from "../repositories/delete-event";
 import { getEventById } from "../repositories/get-event";
 import { getEvents } from "../repositories/query-events";
 import { create, saveCreatedEvent } from "../repositories/save-created-event";
-import { transaction } from "../repositories/transaction";
 import { updateEvent, upsert } from "../repositories/update-event";
 import {
   createEventWorkflow,

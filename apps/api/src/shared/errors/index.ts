@@ -11,6 +11,8 @@ export class ValidationError extends AppError {
   }
 }
 
+export class AuthError extends AppError {}
+
 export class ForbiddenError extends AppError {}
 
 export class EntityNotFound extends AppError {}

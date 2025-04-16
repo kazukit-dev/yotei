@@ -2,6 +2,7 @@ import type { ErrorHandler } from "hono";
 
 import {
   AppError,
+  AuthError,
   EntityNotFound,
   ForbiddenError,
   ValidationError,
@@ -15,6 +16,10 @@ export const errorHandler: ErrorHandler = (err, c) => {
 
   if (err instanceof ValidationError) {
     return c.json(err.errors, 400);
+  }
+
+  if (err instanceof AuthError) {
+    return c.json(err.message, 401);
   }
 
   if (err instanceof ForbiddenError) {
