@@ -1,6 +1,4 @@
 import { type MetaFunction } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
-import { useEffect } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,10 +8,5 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate("/calendars");
-  }, [navigate]);
-  return <div />;
+  return <div>Welcome to Time blocker</div>;
 }
