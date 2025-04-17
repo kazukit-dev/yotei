@@ -1,6 +1,12 @@
 import { Hooks } from "./hook";
 import { http } from "./http";
-import { buildRequest, CustomHeaders, QueryParameter } from "./request";
+import { METHOD } from "./method";
+import {
+  buildRequest,
+  CustomHeaders,
+  QueryParameter,
+  RequestOptions,
+} from "./request";
 import { failure, Result, success } from "./result";
 import { retryHttp, RetryOptions } from "./retry";
 
@@ -53,7 +59,11 @@ export class HttpClient {
     query?: QueryParameter,
     options?: Omit<HttpOptions, "body" | "query">,
   ): Promise<Result<T, E>> {
-    const res = await this._request(path, { ...options, query });
+    const res = await this._request(path, {
+      ...options,
+      query,
+      method: METHOD.GET,
+    });
     return toResult<T, E>(res);
   }
 
@@ -65,6 +75,7 @@ export class HttpClient {
     const res = await this._request(path, {
       ...options,
       body,
+      method: METHOD.POST,
     });
     return toResult<T, E>(res);
   }
@@ -77,6 +88,7 @@ export class HttpClient {
     const res = await this._request(path, {
       ...options,
       body,
+      method: METHOD.PUT,
     });
     return toResult<T, E>(res);
   }
@@ -89,11 +101,12 @@ export class HttpClient {
     const res = await this._request(path, {
       ...options,
       body,
+      method: METHOD.DELETE,
     });
     return toResult<T, E>(res);
   }
 
-  private async _request(path: string, options: HttpOptions) {
+  private async _request(path: string, options: RequestOptions) {
     const url = this.baseURL ? joinURL(this.baseURL, path) : path;
     const baseHttp = http(this.hooks);
     const httpFn = this.retryOptions

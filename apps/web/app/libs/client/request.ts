@@ -1,9 +1,18 @@
+import { Method } from "./method";
+
 export type QueryParameter = Record<
   string,
   string | number | Array<string | number>
 >;
 
 export type CustomHeaders = Record<string, string>;
+
+export type RequestOptions = {
+  method?: Method;
+  query?: QueryParameter;
+  headers?: Record<string, string>;
+  body?: Record<string, unknown>;
+};
 
 const buildURL = (path: string, query?: QueryParameter): URL => {
   const url = new URL(path);
@@ -25,15 +34,11 @@ const buildBody = (data?: Record<string, unknown>): string | undefined => {
 
 export const buildRequest = (
   path: string,
-  options?: {
-    query?: QueryParameter;
-    headers?: Record<string, string>;
-    body?: Record<string, unknown>;
-  },
+  options?: RequestOptions,
 ): Request => {
   const url = buildURL(path, options?.query);
   const body = buildBody(options?.body);
   const headers = buildHeaders(options?.headers);
 
-  return new Request(url, { body, headers });
+  return new Request(url, { body, headers, method: options?.method });
 };
