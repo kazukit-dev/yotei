@@ -23,7 +23,6 @@ export const authenticate: MiddlewareHandler<
     .match(
       (payload) => {
         c.set("userId", payload.userId);
-        c.set("email", payload.email);
       },
       (err) => {
         throw new AuthError("Invalid access token", { cause: err });

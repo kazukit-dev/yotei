@@ -30,6 +30,6 @@ export const errorHandler: ErrorHandler = (err, c) => {
     return c.json(err.message, 404);
   }
 
-  console.error("InternalServerError", err);
+  console.error("An unexpected error occurred", err);
   return c.json(err.message, 500);
 };

@@ -134,7 +134,7 @@ app.post("/signout", zValidator("json", signoutSchema), async (c) => {
   const result = preprocess.andThen(workflow).andThen(revokeToken(db));
 
   return await result.match(
-    () => c.status(204),
+    () => c.body(null, 204),
     (err) => {
       throw err;
     },

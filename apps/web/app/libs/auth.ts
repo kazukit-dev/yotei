@@ -20,33 +20,27 @@ export class Auth {
   }
 
   public async signin(data: { email: string; password: string }) {
-    try {
-      return this._acquireLock(async () => {
-        await this._signin(data);
-      });
-    } catch (err: unknown) {
-      throw new AuthError("Failed to signin", { cause: err });
-    }
+    return this._acquireLock(async () => {
+      await this._signin(data);
+    });
   }
 
   public async signup(data: { name: string; email: string; password: string }) {
-    try {
-      return await this._acquireLock(async () => {
-        this._signup(data);
-      });
-    } catch (err: unknown) {
-      throw new AuthError("Failed to signup", { cause: err });
-    }
+    return await this._acquireLock(async () => {
+      this._signup(data);
+    });
+  }
+
+  public async signout() {
+    return this._acquireLock(async () => {
+      await this._signout();
+    });
   }
 
   public async refreshToken() {
-    try {
-      return this._acquireLock(async () => {
-        await this._refreshToken();
-      });
-    } catch (err: unknown) {
-      throw new AuthError("Failed to refresh token.", { cause: err });
-    }
+    return this._acquireLock(async () => {
+      await this._refreshToken();
+    });
   }
 
   private async _acquireLock(fn: () => Promise<void>) {
@@ -78,20 +72,21 @@ export class Auth {
     const url = new URL("/auth/refresh", this.baseURL);
     const refreshToken = localStorage.getItem("refresh_token");
     if (!refreshToken) {
-      throw new Error("Refresh token is empty");
+      throw new AuthError("Refresh token is empty");
     }
     const res = await fetch(url, {
       method: "POST",
       body: JSON.stringify({ refresh_token: refreshToken }),
       headers: {
-        "content-type": "application/json",
+        "content-type": "application/json; charset=utf-8",
       },
     });
     if (!res.ok) {
-      throw new Error("Token refresh error");
+      this._clearSession();
+      throw new AuthError("Token refresh error");
     }
     const tokens = await res.json();
-    this._saveTokens(tokens);
+    this._saveSession(tokens);
   }
 
   private async _signin(data: {
@@ -104,14 +99,14 @@ export class Auth {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
-        "content-type": "application/json",
+        "content-type": "application/json; charset=utf-8",
       },
     });
     if (!res.ok) {
-      throw new Error("auth error");
+      throw new AuthError("Failed to signin");
     }
     const tokens = await res.json();
-    this._saveTokens(tokens);
+    this._saveSession(tokens);
   }
 
   private async _signup(data: {
@@ -125,16 +120,43 @@ export class Auth {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
-        "content-type": "application/json",
+        "content-type": "application/json; charset=utf-8",
       },
     });
     if (!res.ok) {
-      throw new Error("auth error");
+      throw new AuthError("Failed to signup");
     }
   }
 
-  private _saveTokens(tokens: { access_token: string; refresh_token: string }) {
+  private async _signout() {
+    const url = new URL("/auth/signout", this.baseURL);
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (!refreshToken) {
+      throw new AuthError("Refresh token is empty");
+    }
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: refreshToken }),
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+      },
+    });
+    if (!res.ok) {
+      throw new AuthError("Failed to signout");
+    }
+    this._clearSession();
+  }
+
+  private _saveSession(tokens: {
+    access_token: string;
+    refresh_token: string;
+  }) {
     sessionStorage.setItem("access_token", tokens.access_token);
     localStorage.setItem("refresh_token", tokens.refresh_token);
+  }
+
+  private _clearSession() {
+    sessionStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
   }
 }
