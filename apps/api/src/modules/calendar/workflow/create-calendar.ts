@@ -2,23 +2,27 @@ import { type Ok, ok, Result } from "neverthrow";
 
 import { ValidationError } from "../../../shared/errors";
 import type { CalendarId } from "../../event/objects/id";
-import { generateCalendarId } from "../objects/id";
-import { Name } from "../objects/name";
+import { generateCalendarId } from "../objects/write/id";
+import { CalendarName, createCalendarName } from "../objects/write/name";
+import { createOwnerId, OwnerId } from "../objects/write/owner-id";
 
 export type UnvalidatedCalendar = {
   kind: "unvalidated";
   name: string;
+  ownerId: string;
 };
 
 export type ValidatedCalendar = {
   kind: "validated";
-  name: Name;
+  name: CalendarName;
+  ownerId: OwnerId;
 };
 
 export type CreatedCalendar = {
   kind: "created";
   id: CalendarId;
-  name: Name;
+  name: CalendarName;
+  ownerId: OwnerId;
 };
 
 type ValidateCalendar = (
@@ -33,16 +37,26 @@ type Workflow = (
 
 export const toUnvalidatedCalendar = (input: {
   name: string;
+  ownerId: string;
 }): UnvalidatedCalendar => {
-  return { kind: "unvalidated", name: input.name } as const;
+  return {
+    kind: "unvalidated",
+    name: input.name,
+    ownerId: input.ownerId,
+  } as const;
 };
 
 const validate: ValidateCalendar = (model) => {
-  const name = Name.create(model.name);
+  const name = createCalendarName(model.name);
+  const ownerId = createOwnerId(model.ownerId);
 
-  return name
-    .map((name) => ({ ...model, name, kind: "validated" }) as const)
-    .mapErr((e) => new ValidationError([e]));
+  const values = Result.combineWithAllErrors([name, ownerId]);
+
+  return values
+    .map(([name, ownerId]) => {
+      return { ...model, name, ownerId, kind: "validated" } as const;
+    })
+    .mapErr((e) => new ValidationError(e));
 };
 
 const createCalendar: CreateCalendar = (model) => {

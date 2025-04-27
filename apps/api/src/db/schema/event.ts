@@ -10,15 +10,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const calendars = pgTable("calendars", {
-  id: uuid().primaryKey(),
-  name: varchar({ length: 256 }).notNull(),
-});
-
-export const calendarsRelation = relations(calendars, ({ many }) => ({
-  events: many(events),
-}));
-
 export const events = pgTable("events", {
   id: uuid().primaryKey(),
   title: varchar({ length: 256 }).notNull(),
@@ -32,18 +23,12 @@ export const events = pgTable("events", {
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
-  calendar_id: uuid()
-    .notNull()
-    .references(() => calendars.id, { onDelete: "cascade" }),
+  calendar_id: uuid().notNull(),
   version: smallint().default(1).notNull(),
 });
 
 export const eventRelations = relations(events, ({ many, one }) => ({
   exceptions: many(eventExceptions, { relationName: "exceptions" }),
-  calendar: one(calendars, {
-    fields: [events.calendar_id],
-    references: [calendars.id],
-  }),
   rrule: one(recurrenceRule),
 }));
 

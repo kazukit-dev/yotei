@@ -12,7 +12,7 @@ import { SigninSchema } from "./schema";
 
 export const clientLoader: ClientLoaderFunction = async () => {
   const auth = getAuth();
-  if (auth.isAuthenticated()) return redirect("/");
+  if (auth.isAuthenticated()) return redirect("/calendars");
   return null;
 };
 
@@ -36,5 +36,5 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   const data: SigninSchema = await request.json();
   const auth = getAuth();
   await auth.signin(data);
-  return redirect("/");
+  return redirect("/calendars");
 };
