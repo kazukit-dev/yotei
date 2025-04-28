@@ -14,7 +14,7 @@ export type UserToken = {
 };
 
 export const generateExpiresAt = (): Ok<TokenExpiresAt, never> => {
-  const expiresAt = dayjs().add(30, "m").toDate();
+  const expiresAt = dayjs().add(14, "week").toDate();
   return ok(expiresAt as TokenExpiresAt);
 };
 
