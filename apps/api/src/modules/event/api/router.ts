@@ -1,12 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import type { BlankSchema } from "hono/types";
 import { ok, Result } from "neverthrow";
 
 import { createDBClient } from "../../../db";
 import { transaction } from "../../../shared/db/transaction";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
+import { createAuthenticatedApp } from "../../../shared/hono";
 import { CalendarId, EventId } from "../objects/id";
 import { getEventDetail } from "../query-service/get-event-detail";
 import { deleteEvent } from "../repositories/delete-event";
@@ -39,16 +38,7 @@ import {
   updateEventSchema,
 } from "./schema";
 
-type Bindings = {
-  DB: D1Database;
-  DATABASE_URL: string;
-};
-
-const app = new Hono<
-  { Bindings: Bindings },
-  BlankSchema,
-  "/calendars/:calendarId/events"
->();
+const app = createAuthenticatedApp<"/calendars/:calendarId/events">();
 
 app.post("/", zValidator("json", createEventSchema), async (c) => {
   const client = createDBClient(c.env.DATABASE_URL);
@@ -75,15 +65,16 @@ app.post("/", zValidator("json", createEventSchema), async (c) => {
 });
 
 app.get("/", zValidator("query", getEventsSchema), async (c) => {
-  const client = createDBClient(c.env.DATABASE_URL);
-  const params = c.req.param();
+  const db = createDBClient(c.env.DATABASE_URL);
+
+  const { calendarId } = c.req.param();
   const query = c.req.valid("query");
 
   const unvalidatedCommand = toUnvalidatedQueryCommand({
-    calendarId: params.calendarId,
+    calendarId,
     ...query,
   });
-  const workflow = createQueryWorkflow(getEvents(client));
+  const workflow = createQueryWorkflow(getEvents(db));
   const result = ok(unvalidatedCommand).asyncAndThen(workflow);
 
   return await result.match(

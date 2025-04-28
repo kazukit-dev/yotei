@@ -5,7 +5,7 @@ import { logger } from "hono/logger";
 import { errorHandler } from "./error-handler";
 import { authRouter } from "./modules/auth";
 import { authenticate } from "./modules/auth/middlewares/authenticate";
-import { calendarRouter } from "./modules/calendar";
+import { calendarRouter, checkCalendarPermission } from "./modules/calendar";
 import { eventRouter } from "./modules/event";
 import { userRouter } from "./modules/user";
 import { createAuthenticatedApp } from "./shared/hono";
@@ -24,6 +24,7 @@ const authenticatedApp = createAuthenticatedApp<"/">();
 authenticatedApp.use(authenticate);
 authenticatedApp.route("/users", userRouter);
 authenticatedApp.route("/calendars", calendarRouter);
+authenticatedApp.use("/calendars/:calendarId/*", checkCalendarPermission);
 authenticatedApp.route("/calendars/:calendarId/events", eventRouter);
 app.route("/", authenticatedApp);
 

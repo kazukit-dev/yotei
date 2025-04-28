@@ -4,6 +4,12 @@ import { createHttpClient } from "~/libs/client";
 
 const auth = getAuth();
 
+const contentTypeHook = async (req: Request) => {
+  const headers = new Headers(req.headers);
+  headers.set("Content-Type", "application/json; charset=utf-8");
+  return new Request(req, { headers });
+};
+
 const accessTokenSetHook = async (req: Request) => {
   const headers = new Headers(req.headers);
   const accessToken = auth.getAccessToken();
@@ -22,7 +28,7 @@ const apiClient = createHttpClient(API_URL, {
 });
 
 apiClient.use({
-  beforeRequestHooks: [accessTokenSetHook],
+  beforeRequestHooks: [contentTypeHook, accessTokenSetHook],
   beforeRetryHooks: [tokenRefreshHook],
 });
 

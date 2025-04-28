@@ -13,11 +13,7 @@ export const findCalendars = async (): Promise<Calendar[]> => {
 };
 
 export const createCalendar = async (data: CreateCalendarInput) => {
-  const result = await apiClient.post<Calendar>("/calendars", data, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const result = await apiClient.post<Calendar>("/calendars", data);
   if (result.ok) {
     return result.data;
   }
