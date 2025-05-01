@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { Result, ResultAsync } from "neverthrow";
 
 import type {
-  createDBClient,
+  DB,
   EventExceptionSelectModel,
   EventSelectModel,
   RecurrenceRuleSelectModel,
@@ -43,7 +43,7 @@ type EventModel = Omit<
 };
 
 const queryEvents =
-  (client: ReturnType<typeof createDBClient>) =>
+  (client: DB) =>
   (
     calendarId: CalendarId,
     from: Date,
@@ -91,7 +91,7 @@ const queryEvents =
   };
 
 export const getEvents =
-  (client: ReturnType<typeof createDBClient>): GetEvents =>
+  (client: DB): GetEvents =>
   ({ input }) => {
     const from = dayjs(input.from).startOf("D").toDate();
     const to = dayjs(input.to).endOf("D").toDate();

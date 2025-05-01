@@ -5,12 +5,8 @@ import { Exception, type ExceptionDate } from "../exception/write";
 import { CalendarId, EventId } from "../id";
 import { RRule, Until } from "../rrule/write";
 import { Title } from "../title";
-import {
-  deleteEvent,
-  type Event,
-  OPERATION_PATTERN,
-  updateEvent,
-} from "./write";
+import { OPERATION_PATTERN } from "./operation-pattern";
+import { deleteEvent, type Event, updateEvent } from "./write";
 
 const singleEvent = {
   id: "1" as EventId,
@@ -71,9 +67,10 @@ describe("updateEvent", () => {
       duration: 1 as Duration,
       is_all_day: false,
       target_date: new Date("2023-01-01") as ExceptionDate,
+      pattern: OPERATION_PATTERN.THIS,
     };
 
-    const result = updateEvent(input, 0)(singleEvent);
+    const result = updateEvent(singleEvent, input);
     expect(result.isOk()).toBe(true);
     expect(result._unsafeUnwrap()).not.toHaveProperty("create");
     expect(result._unsafeUnwrap()).toHaveProperty(
@@ -95,9 +92,10 @@ describe("updateEvent", () => {
           duration: 86400000 as Duration,
           is_all_day: false,
           target_date: new Date("2023-01-01") as ExceptionDate,
-        };
+          pattern: OPERATION_PATTERN.THIS,
+        } as const;
 
-        const result = updateEvent(input, 0)(recurringEventWithoutException);
+        const result = updateEvent(recurringEventWithoutException, input);
         expect(result.isOk()).toBe(true);
         const { create, update } = result._unsafeUnwrap();
         expect(create).toEqual(
@@ -124,9 +122,10 @@ describe("updateEvent", () => {
           duration: 86400000 as Duration,
           is_all_day: false,
           target_date: new Date("2023-01-08") as ExceptionDate,
-        };
+          pattern: OPERATION_PATTERN.THIS,
+        } as const;
 
-        const result = updateEvent(input, 0)(recurringEventWithException);
+        const result = updateEvent(recurringEventWithException, input);
         expect(result.isErr()).toBeTruthy();
       });
     });
@@ -139,9 +138,10 @@ describe("updateEvent", () => {
           duration: 86400000 as Duration,
           is_all_day: true,
           target_date: new Date("2023-01-06") as ExceptionDate,
-        };
+          pattern: OPERATION_PATTERN.FUTURE,
+        } as const;
 
-        const result = updateEvent(input, 1)(recurringEventWithException);
+        const result = updateEvent(recurringEventWithException, input);
         expect(result.isOk()).toBe(true);
 
         const data = result._unsafeUnwrap();
@@ -181,9 +181,10 @@ describe("updateEvent", () => {
           duration: 86400000 as Duration,
           is_all_day: true,
           target_date: new Date("2023-01-06") as ExceptionDate,
-        };
+          pattern: OPERATION_PATTERN.ALL,
+        } as const;
 
-        const result = updateEvent(input, 2)(recurringEventWithException);
+        const result = updateEvent(recurringEventWithException, input);
         expect(result.isOk()).toBe(true);
 
         const data = result._unsafeUnwrap();

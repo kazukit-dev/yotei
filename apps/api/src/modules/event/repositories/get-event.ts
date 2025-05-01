@@ -3,7 +3,7 @@ import { err, ok, ResultAsync } from "neverthrow";
 
 import type { createDBClient } from "../../../db";
 import { DBError, EntityNotFound } from "../../../shared/errors";
-import { Event } from "../objects/event/write";
+import { createEvent, Event } from "../objects/event/write";
 import type { CalendarId, EventId } from "../objects/id";
 
 const findById =
@@ -36,7 +36,7 @@ const findById =
         },
       }),
       (err) => new DBError("Failed to get event by event-id.", { cause: err }),
-    ).andThen((event) => (event ? Event.create(event) : ok(null)));
+    ).andThen((event) => (event ? createEvent(event) : ok(null)));
   };
 
 export const getEventById =

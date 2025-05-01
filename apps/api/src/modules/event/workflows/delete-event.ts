@@ -2,11 +2,10 @@ import { Result } from "neverthrow";
 
 import { ValidationError } from "../../../shared/errors";
 import {
-  deleteEvent,
-  Event,
-  getAffectedRange,
+  createOperationPattern,
   OperationPattern,
-} from "../objects/event/write";
+} from "../objects/event/operation-pattern";
+import { deleteEvent, Event, getAffectedRange } from "../objects/event/write";
 import { ExceptionDate } from "../objects/exception/write";
 import { EventId } from "../objects/id";
 
@@ -43,7 +42,7 @@ type DeleteEventWorkflow = (
 ) => Result<DeletedEvent, WorkflowError>;
 
 const validate: Validate = (command: UnvalidatedCommand) => {
-  const pattern = OperationPattern.create(command.input.pattern);
+  const pattern = createOperationPattern(command.input.pattern);
   const exceptionDate = ExceptionDate.create(command.input.target_date);
 
   const values = Result.combineWithAllErrors([pattern, exceptionDate]);

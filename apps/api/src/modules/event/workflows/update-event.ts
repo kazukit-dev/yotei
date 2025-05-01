@@ -5,8 +5,12 @@ import { compare } from "../../../shared/helpers/date";
 import dayjs from "../../../shared/helpers/dayjs";
 import { tuple } from "../../../shared/helpers/tuple";
 import { Duration, type End, type Start, toDates } from "../objects/date";
+import {
+  createOperationPattern,
+  OperationPattern,
+} from "../objects/event/operation-pattern";
 import type { Event } from "../objects/event/write";
-import { OperationPattern, updateEvent } from "../objects/event/write";
+import { updateEvent } from "../objects/event/write";
 import { ExceptionDate } from "../objects/exception/write";
 import { getRecurringDates } from "../objects/rrule/read";
 import { Title } from "../objects/title";
@@ -37,12 +41,12 @@ type ValidatedInput = {
   end: End;
   duration: Duration;
   is_all_day: boolean;
+  pattern: OperationPattern;
 };
 
 type ValidatedCommand = {
   input: ValidatedInput;
   kind: "validated";
-  pattern: OperationPattern;
   event: Event;
 };
 
@@ -77,7 +81,7 @@ const validate: Validate = ({ input, event }) => {
   const dates = toDates({ start: input.start, end: input.end });
   const duration = dates.andThen(Duration.create);
   const targetDate = toExceptionDate(event, input.target_date);
-  const pattern = OperationPattern.create(input.pattern);
+  const pattern = createOperationPattern(input.pattern);
 
   const values = Result.combineWithAllErrors(
     tuple(title, dates, duration, targetDate, pattern),
@@ -91,8 +95,8 @@ const validate: Validate = ({ input, event }) => {
         duration,
         target_date: targetDate,
         is_all_day: input.is_all_day,
+        pattern,
       },
-      pattern,
     }))
     .map((updates) => ({ event, ...updates, kind: "validated" }) as const)
     .mapErr((e) => new ValidationError(e));
@@ -134,11 +138,8 @@ const toExceptionDate = (
   });
 };
 
-const update: UpdateEvent = ({ input, event, pattern }) => {
-  return updateEvent(
-    input,
-    pattern,
-  )(event).mapErr((e) => new EventUpdateError(e));
+const update: UpdateEvent = ({ input, event }) => {
+  return updateEvent(event, input).mapErr((e) => new EventUpdateError(e));
 };
 
 export const updateEventWorkflow =
