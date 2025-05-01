@@ -1,18 +1,12 @@
 import { describe, expect, test } from "vitest";
 
-import {
-  createDuration,
-  createStart,
-  Duration,
-  type End,
-  Start,
-} from "../date";
-import { createException, type ExceptionDate } from "../exception/write";
-import { CalendarId, createCalendarId, createEventId, EventId } from "../id";
-import { createRRule, createUntil } from "../rrule/write";
-import { createTitle, Title } from "../title";
+import { createDuration, createStart, Duration, type End, Start } from "./date";
+import { deleteEvent, type Event, updateEvent } from "./event";
+import { createException, type ExceptionDate } from "./exception";
+import { CalendarId, createCalendarId, createEventId, EventId } from "./id";
 import { OPERATION_PATTERN } from "./operation-pattern";
-import { deleteEvent, type Event, updateEvent } from "./write";
+import { createRRule, createUntil } from "./rrule";
+import { createTitle, Title } from "./title";
 
 const singleEvent = {
   id: "1" as EventId,

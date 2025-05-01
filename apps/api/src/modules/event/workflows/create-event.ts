@@ -9,11 +9,15 @@ import {
   type End,
   type Start,
   toDuration,
-} from "../objects/date";
-import type { Event } from "../objects/event/write";
-import { CalendarId, createCalendarId, generateEventId } from "../objects/id";
-import { createRRule, RRule, type Until } from "../objects/rrule/write";
-import { createTitle, Title } from "../objects/title";
+} from "../objects/write/date";
+import type { Event } from "../objects/write/event";
+import {
+  CalendarId,
+  createCalendarId,
+  generateEventId,
+} from "../objects/write/id";
+import { createRRule, RRule, type Until } from "../objects/write/rrule";
+import { createTitle, Title } from "../objects/write/title";
 
 type WorkflowError = ValidationError;
 

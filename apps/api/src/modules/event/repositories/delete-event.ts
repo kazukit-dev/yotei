@@ -3,7 +3,7 @@ import { ResultAsync } from "neverthrow";
 
 import { createDBClient, events } from "../../../db";
 import { DBError } from "../../../shared/errors";
-import { EventId } from "../objects/id";
+import { EventId } from "../objects/write/id";
 
 type DeletedEvent = { id: EventId; kind: "deleted" };
 

@@ -9,7 +9,7 @@ import {
   type Transaction,
 } from "../../../db";
 import { DBError } from "../../../shared/errors";
-import type { Event } from "../objects/event/write";
+import type { Event } from "../objects/write/event";
 
 type CreatedEvent = Event & { kind: "created" };
 

@@ -4,6 +4,7 @@ import { ValidationError } from "../../../shared/errors";
 import { compare } from "../../../shared/helpers/date";
 import dayjs from "../../../shared/helpers/dayjs";
 import { tuple } from "../../../shared/helpers/tuple";
+import { getRecurringDates } from "../objects/read/rrule";
 import {
   createEnd,
   createStart,
@@ -11,16 +12,15 @@ import {
   type End,
   type Start,
   toDuration,
-} from "../objects/date";
+} from "../objects/write/date";
+import type { Event } from "../objects/write/event";
+import { updateEvent } from "../objects/write/event";
+import { createExceptionDate, ExceptionDate } from "../objects/write/exception";
 import {
   createOperationPattern,
   OperationPattern,
-} from "../objects/event/operation-pattern";
-import type { Event } from "../objects/event/write";
-import { updateEvent } from "../objects/event/write";
-import { createExceptionDate, ExceptionDate } from "../objects/exception/write";
-import { getRecurringDates } from "../objects/rrule/read";
-import { createTitle, Title } from "../objects/title";
+} from "../objects/write/operation-pattern";
+import { createTitle, Title } from "../objects/write/title";
 
 class EventUpdateError extends Error {}
 

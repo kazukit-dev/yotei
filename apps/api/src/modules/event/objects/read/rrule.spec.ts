@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getRecurringDates, type RRule } from "./read";
+import { getRecurringDates, type RRule } from "../read/rrule";
 
 describe("getRecurringDates", () => {
   it("should return recurring dates based on the given rule", () => {

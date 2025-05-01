@@ -20,15 +20,15 @@ export interface UnvalidatedException {
   type: string;
 }
 
-export const Exception = {
-  create: (input: UnvalidatedException): Result<Exception, string> => {
-    const targetDate = new Date(input.target_date);
-    if (input.type !== "modified" && input.type !== "cancelled") {
-      return err("InvalidExceptionType");
-    }
-    return ok({
-      target_date: targetDate,
-      type: input.type,
-    });
-  },
-} as const;
+export const createException = (
+  input: UnvalidatedException,
+): Result<Exception, string> => {
+  const targetDate = new Date(input.target_date);
+  if (input.type !== "modified" && input.type !== "cancelled") {
+    return err("InvalidExceptionType");
+  }
+  return ok({
+    target_date: targetDate,
+    type: input.type,
+  });
+};

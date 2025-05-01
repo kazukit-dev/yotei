@@ -6,8 +6,8 @@ import {
   type Event,
   getOccurrences,
   type Occurrence,
-} from "../objects/event/read";
-import { CalendarId, createCalendarId } from "../objects/id";
+} from "../objects/read/event";
+import { CalendarId, createCalendarId } from "../objects/write/id";
 
 export class QueryEventsError extends Error {}
 export class ExpandError extends Error {}

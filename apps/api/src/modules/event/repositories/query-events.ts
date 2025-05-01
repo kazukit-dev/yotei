@@ -8,8 +8,8 @@ import type {
   RecurrenceRuleSelectModel,
 } from "../../../db";
 import { DBError } from "../../../shared/errors";
-import { Event } from "../objects/event/read";
-import type { CalendarId } from "../objects/id";
+import { createEvent } from "../objects/read/event";
+import type { CalendarId } from "../objects/write/id";
 import type { GetEvents } from "../workflows/get-events";
 
 const event = {
@@ -97,7 +97,7 @@ export const getEvents =
     const to = dayjs(input.to).endOf("D").toDate();
     return queryEvents(client)(input.calendarId, from, to)
       .andThen((events) => {
-        return Result.combine(events.map(Event.create));
+        return Result.combine(events.map(createEvent));
       })
       .map((events) => {
         return {

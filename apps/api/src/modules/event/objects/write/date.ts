@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { err, ok, Result } from "neverthrow";
 
-import type { Brand } from "../../../shared/helpers/brand";
-import { isValidDate } from "../../../shared/helpers/date";
+import type { Brand } from "../../../../shared/helpers/brand";
+import { isValidDate } from "../../../../shared/helpers/date";
 
 type ExpectedDate = string | number | Date;
 

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-import * as RRule from "../rrule/read";
-import { type Event, getOccurrences } from "./read";
+import { type Event, getOccurrences } from "./event";
+import * as RRule from "./rrule";
 
 const getRecurringDates = vi.spyOn(RRule, "getRecurringDates");
 

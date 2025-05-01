@@ -2,7 +2,7 @@ import { Result } from "neverthrow";
 
 import { ValidationError } from "../../../../shared/errors";
 import { tuple } from "../../../../shared/helpers/tuple";
-import { CalendarId } from "../../../event/objects/id";
+import { CalendarId } from "../../../event/objects/write/id";
 import { createCalendarId } from "./id";
 import { CalendarName, createCalendarName } from "./name";
 import { createOwnerId, OwnerId } from "./owner-id";

@@ -1,7 +1,7 @@
 import { type Ok, ok, Result } from "neverthrow";
 
 import { ValidationError } from "../../../shared/errors";
-import type { CalendarId } from "../../event/objects/id";
+import type { CalendarId } from "../../event/objects/write/id";
 import { generateCalendarId } from "../objects/write/id";
 import { CalendarName, createCalendarName } from "../objects/write/name";
 import { createOwnerId, OwnerId } from "../objects/write/owner-id";

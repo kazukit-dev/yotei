@@ -1,6 +1,6 @@
 import { err, ok, type Result } from "neverthrow";
 
-import type { Brand } from "../../../shared/helpers/brand";
+import type { Brand } from "../../../../shared/helpers/brand";
 
 export type EventId = Brand<string, "EventId">;
 

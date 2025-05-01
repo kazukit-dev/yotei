@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { Exception } from "./read";
+import { createException } from "../read/exception";
 
 describe("Exceptions", () => {
   describe("create", () => {
@@ -10,7 +10,7 @@ describe("Exceptions", () => {
         type: "modified",
       };
 
-      const ex = Exception.create(unvalidated);
+      const ex = createException(unvalidated);
 
       expect(ex._unsafeUnwrap()).toEqual({
         ...unvalidated,
@@ -23,7 +23,7 @@ describe("Exceptions", () => {
         type: "invalid-type",
       };
 
-      const ex = Exception.create(unvalidated);
+      const ex = createException(unvalidated);
 
       expect(ex.isErr()).toBeTruthy();
     });

@@ -6,7 +6,7 @@ import { transaction } from "../../../shared/db/transaction";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 import { createAuthenticatedApp } from "../../../shared/hono";
-import { createCalendarId, createEventId } from "../objects/id";
+import { createCalendarId, createEventId } from "../objects/write/id";
 import { getEventDetail } from "../query-service/get-event-detail";
 import { deleteEvent } from "../repositories/delete-event";
 import { getEventById } from "../repositories/get-event";

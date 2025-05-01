@@ -1,8 +1,17 @@
 import { err, ok, Result } from "neverthrow";
 
 import dayjs from "../../../../shared/helpers/dayjs";
-import { Exception, type UnvalidatedException } from "../exception/read";
-import { getRecurringDates, RRule, type UnvalidatedRRule } from "../rrule/read";
+import {
+  createException,
+  Exception,
+  type UnvalidatedException,
+} from "./exception";
+import {
+  createRRule,
+  getRecurringDates,
+  RRule,
+  type UnvalidatedRRule,
+} from "./rrule";
 
 interface _Event {
   id: string;
@@ -42,37 +51,35 @@ type UnvalidatedEvent = {
   version: number;
 };
 
-export const Event = {
-  create: (input: UnvalidatedEvent): Result<Event, string> => {
-    const start = new Date(input.start);
-    const end = new Date(input.end);
+export const createEvent = (input: UnvalidatedEvent): Result<Event, string> => {
+  const start = new Date(input.start);
+  const end = new Date(input.end);
 
-    if (!input.is_recurring) {
-      const model = input;
-      return ok({
-        ...model,
-        start,
-        end,
-        is_recurring: false,
-      });
-    }
-
-    if (!input.rrule) {
-      return err("ReadModelError");
-    }
-    const exceptions = input.exceptions.map(Exception.create);
-    const rrule = RRule.create(input.rrule);
-
-    return Result.combine(exceptions).map((exs) => ({
-      ...input,
+  if (!input.is_recurring) {
+    const model = input;
+    return ok({
+      ...model,
       start,
       end,
-      rrule,
-      is_recurring: true,
-      exceptions: exs,
-    }));
-  },
-} as const;
+      is_recurring: false,
+    });
+  }
+
+  if (!input.rrule) {
+    return err("ReadModelError");
+  }
+  const exceptions = input.exceptions.map(createException);
+  const rrule = createRRule(input.rrule);
+
+  return Result.combine(exceptions).map((exs) => ({
+    ...input,
+    start,
+    end,
+    rrule,
+    is_recurring: true,
+    exceptions: exs,
+  }));
+};
 
 export interface Occurrence {
   id: string;

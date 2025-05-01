@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 import { err, ok, type Result } from "neverthrow";
 
-import type { ValidationError } from "../../common/errors";
-import type {} from "../objects/event/read";
-import { getRecurringDates } from "../objects/rrule/read";
+import type { ValidationError } from "../../../shared/errors";
+import type {} from "../objects/read/event";
+import { getRecurringDates } from "../objects/read/rrule";
 
 class NotFoundRecurringEvent extends Error {}
 

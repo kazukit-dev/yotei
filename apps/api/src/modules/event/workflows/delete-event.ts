@@ -1,13 +1,13 @@
 import { Result } from "neverthrow";
 
 import { ValidationError } from "../../../shared/errors";
+import { deleteEvent, Event, getAffectedRange } from "../objects/write/event";
+import { createExceptionDate, ExceptionDate } from "../objects/write/exception";
+import { EventId } from "../objects/write/id";
 import {
   createOperationPattern,
   OperationPattern,
-} from "../objects/event/operation-pattern";
-import { deleteEvent, Event, getAffectedRange } from "../objects/event/write";
-import { createExceptionDate, ExceptionDate } from "../objects/exception/write";
-import { EventId } from "../objects/id";
+} from "../objects/write/operation-pattern";
 
 class EventDeleteError extends Error {}
 

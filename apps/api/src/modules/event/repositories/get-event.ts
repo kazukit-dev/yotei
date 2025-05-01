@@ -3,8 +3,8 @@ import { err, ok, ResultAsync } from "neverthrow";
 
 import type { createDBClient } from "../../../db";
 import { DBError, EntityNotFound } from "../../../shared/errors";
-import { createEvent, Event } from "../objects/event/write";
-import type { CalendarId, EventId } from "../objects/id";
+import { createEvent, Event } from "../objects/write/event";
+import type { CalendarId, EventId } from "../objects/write/id";
 
 const findById =
   (client: ReturnType<typeof createDBClient>) =>
