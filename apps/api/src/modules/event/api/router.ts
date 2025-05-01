@@ -6,7 +6,7 @@ import { transaction } from "../../../shared/db/transaction";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 import { createAuthenticatedApp } from "../../../shared/hono";
-import { CalendarId, EventId } from "../objects/id";
+import { createCalendarId, createEventId } from "../objects/id";
 import { getEventDetail } from "../query-service/get-event-detail";
 import { deleteEvent } from "../repositories/delete-event";
 import { getEventById } from "../repositories/get-event";
@@ -94,8 +94,8 @@ app.put("/:eventId", zValidator("json", updateEventSchema), async (c) => {
 
   const workflow = updateEventWorkflow();
 
-  const calendarId = CalendarId.create(params.calendarId);
-  const eventId = EventId.create(params.eventId);
+  const calendarId = createCalendarId(params.calendarId);
+  const eventId = createEventId(params.eventId);
   const values = Result.combineWithAllErrors(tuple(calendarId, eventId)).mapErr(
     (errors) => new ValidationError(errors),
   );
@@ -158,8 +158,8 @@ app.delete("/:eventId", zValidator("json", deleteEventSchema), async (c) => {
   const params = c.req.param();
   const { pattern, target_date } = c.req.valid("json");
 
-  const calendarId = CalendarId.create(params.calendarId);
-  const eventId = EventId.create(params.eventId);
+  const calendarId = createCalendarId(params.calendarId);
+  const eventId = createEventId(params.eventId);
   const values = Result.combineWithAllErrors(tuple(calendarId, eventId)).mapErr(
     (errors) => new ValidationError(errors),
   );

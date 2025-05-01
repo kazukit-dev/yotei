@@ -2,61 +2,52 @@ import dayjs from "dayjs";
 import { err, ok, Result } from "neverthrow";
 
 import type { Brand } from "../../../shared/helpers/brand";
-import { compare, isValidDate } from "../../../shared/helpers/date";
+import { isValidDate } from "../../../shared/helpers/date";
+
+type ExpectedDate = string | number | Date;
 
 export type Start = Brand<Date, "Start">;
-export const Start = {
-  create: (value: string | number | Date): Result<Start, "InvalidDate"> => {
-    return toDate(value);
-  },
-} as const;
-
-export type End = Brand<Date, "End">;
-export const End = {
-  create: (value: string | number | Date): Result<End, "InvalidDate"> => {
-    return toDate(value);
-  },
-} as const;
-
-export type Duration = Brand<number, "Duration">;
-export const Duration = {
-  // parameter をstart ,end にした方が良い
-  create: (input: {
-    start: Date;
-    end: Date;
-  }): Result<Duration, "InvalidDuration"> => {
-    const diff = dayjs(input.end).diff(input.start);
-    if (diff < 0) {
-      return err("InvalidDuration");
-    }
-    return ok(diff as Duration);
-  },
-  from: (value: number): Result<Duration, "InvalidDuration"> => {
-    if (value < 0) {
-      return err("InvalidDuration");
-    }
-    return ok(value as Duration);
-  },
-} as const;
-
-const toDate = <T extends Date>(
+export const createStart = (
   value: string | number | Date,
-): Result<T, "InvalidDate"> => {
-  return isValidDate(value) ? ok(new Date(value) as T) : err("InvalidDate");
+): Result<Start, "InvalidStartDate"> => {
+  return isValidDate(value)
+    ? ok(new Date(value) as Start)
+    : err("InvalidStartDate");
 };
 
-export const toDates = (input: {
-  start: string;
-  end: string;
-}): Result<{ start: Start; end: End }, string> => {
-  const start = Start.create(input.start);
-  const end = End.create(input.end);
+export type End = Brand<Date, "End">;
+export const createEnd = (
+  value: string | number | Date,
+): Result<End, "InvalidEndDate"> => {
+  return isValidDate(value)
+    ? ok(new Date(value) as End)
+    : err("InvalidEndDate");
+};
 
-  const values = Result.combine([start, end]);
-  return values.andThen(([start, end]) => {
-    if (compare(start, ">", end)) {
-      return err("InvalidDateRange");
-    }
-    return ok({ start, end });
-  });
+export type Duration = Brand<number, "Duration">;
+
+export const toDuration = (
+  start: ExpectedDate,
+  end: ExpectedDate,
+): Result<Duration, string> => {
+  if (!isValidDate(start)) {
+    return err("InvalidStartDate");
+  }
+  if (!isValidDate(end)) {
+    return err("InvalidEndDate");
+  }
+  const diff = dayjs(end).diff(start);
+  if (diff < 0) {
+    return err("InvalidDuration");
+  }
+  return ok(diff as Duration);
+};
+
+export const createDuration = (
+  value: number,
+): Result<Duration, "InvalidDuration"> => {
+  if (value < 0) {
+    return err("InvalidDuration");
+  }
+  return ok(value as Duration);
 };

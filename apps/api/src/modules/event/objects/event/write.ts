@@ -3,15 +3,35 @@ import { err, Ok, ok, Result } from "neverthrow";
 import { ValidationError } from "../../../../shared/errors";
 import { compare } from "../../../../shared/helpers/date";
 import { tuple } from "../../../../shared/helpers/tuple";
-import { Duration, End, Start } from "../date";
 import {
+  createDuration,
+  createEnd,
+  createStart,
+  Duration,
+  End,
+  Start,
+} from "../date";
+import {
+  createException,
   Exception,
   type ExceptionDate,
   type UnvalidatedException,
 } from "../exception/write";
-import { CalendarId, EventId, generateEventId } from "../id";
-import { Dtstart, RRule, Until } from "../rrule/write";
-import { Title } from "../title";
+import {
+  CalendarId,
+  createCalendarId,
+  createEventId,
+  EventId,
+  generateEventId,
+} from "../id";
+import {
+  createDtstart,
+  createRRule,
+  createUntil,
+  RRule,
+  Until,
+} from "../rrule/write";
+import { createTitle, Title } from "../title";
 import { OPERATION_PATTERN, OperationPattern } from "./operation-pattern";
 
 interface _Event {
@@ -61,14 +81,14 @@ type UnvalidatedInput = {
 type CreateEvent = (input: UnvalidatedInput) => Result<Event, ValidationError>;
 
 export const createEvent: CreateEvent = (input) => {
-  const eventId = EventId.create(input.id);
-  const title = Title.create(input.title);
-  const start = Start.create(input.start);
-  const duration = Duration.from(input.duration);
-  const calendarId = CalendarId.create(input.calendar_id);
+  const eventId = createEventId(input.id);
+  const title = createTitle(input.title);
+  const start = createStart(input.start);
+  const duration = createDuration(input.duration);
+  const calendarId = createCalendarId(input.calendar_id);
 
   if (!input.is_recurring) {
-    const end = End.create(input.end);
+    const end = createEnd(input.end);
     const values = tuple(eventId, title, start, end, duration, calendarId);
 
     return Result.combineWithAllErrors(values)
@@ -91,9 +111,9 @@ export const createEvent: CreateEvent = (input) => {
     return err(new ValidationError(["EmptyRRule"]));
   }
 
-  const until = Until.create(input.end);
-  const exceptions = Result.combine(input.exceptions.map(Exception.create));
-  const rrule = RRule.create(input.rrule);
+  const until = createUntil(input.end);
+  const exceptions = Result.combine(input.exceptions.map(createException));
+  const rrule = createRRule(input.rrule);
 
   const values = Result.combineWithAllErrors(
     tuple(
@@ -257,14 +277,14 @@ const updateThisEvent: UpdateRecurringEvent = (event, input) => {
 
 const updateFutureEvent: UpdateRecurringEvent = (event, input) => {
   // 1. 既存のeventのuntilをtarget_dateまでに設定
-  const existEvent = Until.create(input.target_date).map((until) => {
+  const existEvent = createUntil(input.target_date).map((until) => {
     return {
       ...event,
       rrule: { ...event.rrule, until },
     } as RecurringEvent;
   });
   // 2. target_dateがstartの新たなevent
-  const dtstart = Dtstart.create(input.target_date);
+  const dtstart = createDtstart(input.target_date);
   const futureEvent = dtstart.map((dtstart) => {
     return {
       ...event,
@@ -350,7 +370,7 @@ const deleteRecurringEvent: DeleteRecurringEvent = (event, input) => {
 
     case OPERATION_PATTERN.FUTURE: {
       const _until = new Date(input.target_date).getTime() - 1;
-      return Until.create(_until).map((until) => {
+      return createUntil(_until).map((until) => {
         return {
           ...event,
           rrule: {

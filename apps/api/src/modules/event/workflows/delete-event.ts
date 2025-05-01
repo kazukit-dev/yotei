@@ -6,7 +6,7 @@ import {
   OperationPattern,
 } from "../objects/event/operation-pattern";
 import { deleteEvent, Event, getAffectedRange } from "../objects/event/write";
-import { ExceptionDate } from "../objects/exception/write";
+import { createExceptionDate, ExceptionDate } from "../objects/exception/write";
 import { EventId } from "../objects/id";
 
 class EventDeleteError extends Error {}
@@ -43,7 +43,7 @@ type DeleteEventWorkflow = (
 
 const validate: Validate = (command: UnvalidatedCommand) => {
   const pattern = createOperationPattern(command.input.pattern);
-  const exceptionDate = ExceptionDate.create(command.input.target_date);
+  const exceptionDate = createExceptionDate(command.input.target_date);
 
   const values = Result.combineWithAllErrors([pattern, exceptionDate]);
 

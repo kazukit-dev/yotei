@@ -4,16 +4,23 @@ import { ValidationError } from "../../../shared/errors";
 import { compare } from "../../../shared/helpers/date";
 import dayjs from "../../../shared/helpers/dayjs";
 import { tuple } from "../../../shared/helpers/tuple";
-import { Duration, type End, type Start, toDates } from "../objects/date";
+import {
+  createEnd,
+  createStart,
+  Duration,
+  type End,
+  type Start,
+  toDuration,
+} from "../objects/date";
 import {
   createOperationPattern,
   OperationPattern,
 } from "../objects/event/operation-pattern";
 import type { Event } from "../objects/event/write";
 import { updateEvent } from "../objects/event/write";
-import { ExceptionDate } from "../objects/exception/write";
+import { createExceptionDate, ExceptionDate } from "../objects/exception/write";
 import { getRecurringDates } from "../objects/rrule/read";
-import { Title } from "../objects/title";
+import { createTitle, Title } from "../objects/title";
 
 class EventUpdateError extends Error {}
 
@@ -77,17 +84,18 @@ export const toUnvalidateUpdateCommand = (
 });
 
 const validate: Validate = ({ input, event }) => {
-  const title = Title.create(input.title);
-  const dates = toDates({ start: input.start, end: input.end });
-  const duration = dates.andThen(Duration.create);
+  const title = createTitle(input.title);
+  const start = createStart(input.start);
+  const end = createEnd(input.end);
+  const duration = toDuration(input.start, input.end);
   const targetDate = toExceptionDate(event, input.target_date);
   const pattern = createOperationPattern(input.pattern);
 
   const values = Result.combineWithAllErrors(
-    tuple(title, dates, duration, targetDate, pattern),
+    tuple(title, start, end, duration, targetDate, pattern),
   );
   return values
-    .map(([title, { start, end }, duration, targetDate, pattern]) => ({
+    .map(([title, start, end, duration, targetDate, pattern]) => ({
       input: {
         title,
         start,
@@ -98,15 +106,15 @@ const validate: Validate = ({ input, event }) => {
         pattern,
       },
     }))
-    .map((updates) => ({ event, ...updates, kind: "validated" }) as const)
-    .mapErr((e) => new ValidationError(e));
+    .mapErr((e) => new ValidationError(e))
+    .map((updates) => ({ event, ...updates, kind: "validated" }) as const);
 };
 
 const toExceptionDate = (
   event: Event,
   targetDate: string,
 ): Result<ExceptionDate, string> => {
-  const exceptionDate = ExceptionDate.create(targetDate);
+  const exceptionDate = createExceptionDate(targetDate);
   if (!event.is_recurring) {
     return exceptionDate.andThen((date) => {
       return ok(date);

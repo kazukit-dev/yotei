@@ -7,7 +7,7 @@ import {
   getOccurrences,
   type Occurrence,
 } from "../objects/event/read";
-import { CalendarId } from "../objects/id";
+import { CalendarId, createCalendarId } from "../objects/id";
 
 export class QueryEventsError extends Error {}
 export class ExpandError extends Error {}
@@ -89,7 +89,7 @@ export const toUnvalidatedQueryCommand = (input: {
 };
 
 const validate: Validate = ({ input }) => {
-  const calendarId = CalendarId.create(input.calendarId);
+  const calendarId = createCalendarId(input.calendarId);
   const dateRange = dayjs(input.to).isAfter(input.from)
     ? ok({ from: new Date(input.from), to: new Date(input.to) })
     : err("InvalidDateRange");

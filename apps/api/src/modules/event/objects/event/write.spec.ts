@@ -1,10 +1,16 @@
 import { describe, expect, test } from "vitest";
 
-import { Duration, type End, Start } from "../date";
-import { Exception, type ExceptionDate } from "../exception/write";
-import { CalendarId, EventId } from "../id";
-import { RRule, Until } from "../rrule/write";
-import { Title } from "../title";
+import {
+  createDuration,
+  createStart,
+  Duration,
+  type End,
+  Start,
+} from "../date";
+import { createException, type ExceptionDate } from "../exception/write";
+import { CalendarId, createCalendarId, createEventId, EventId } from "../id";
+import { createRRule, createUntil } from "../rrule/write";
+import { createTitle, Title } from "../title";
 import { OPERATION_PATTERN } from "./operation-pattern";
 import { deleteEvent, type Event, updateEvent } from "./write";
 
@@ -19,19 +25,19 @@ const singleEvent = {
   is_recurring: false,
 } satisfies Event;
 
-const rrule = RRule.create({
+const rrule = createRRule({
   freq: 3,
   until: new Date("2023-01-10"),
   dtstart: new Date("2023-01-01"),
 })._unsafeUnwrap();
 
 const recurringEventWithoutException = {
-  id: EventId.create("1")._unsafeUnwrap(),
-  title: Title.create("Single Event")._unsafeUnwrap(),
-  start: Start.create(new Date("2023-01-01"))._unsafeUnwrap(),
-  end: Until.create(new Date("2023-01-10"))._unsafeUnwrap(),
-  duration: Duration.from(360000)._unsafeUnwrap(),
-  calendar_id: CalendarId.create("1")._unsafeUnwrap(),
+  id: createEventId("1")._unsafeUnwrap(),
+  title: createTitle("Single Event")._unsafeUnwrap(),
+  start: createStart(new Date("2023-01-01"))._unsafeUnwrap(),
+  end: createUntil(new Date("2023-01-10"))._unsafeUnwrap(),
+  duration: createDuration(360000)._unsafeUnwrap(),
+  calendar_id: createCalendarId("1")._unsafeUnwrap(),
   is_all_day: true,
   is_recurring: true,
   rrule,
@@ -39,19 +45,19 @@ const recurringEventWithoutException = {
 } satisfies Event;
 
 const exceptions = [
-  Exception.create({
+  createException({
     target_date: "2023-01-08",
     type: "modified",
   })._unsafeUnwrap(),
 ];
 
 const recurringEventWithException = {
-  id: EventId.create("1")._unsafeUnwrap(),
-  title: Title.create("Single Event")._unsafeUnwrap(),
-  start: Start.create(new Date("2023-01-01"))._unsafeUnwrap(),
-  end: Until.create(new Date("2023-01-10"))._unsafeUnwrap(),
-  duration: Duration.from(360000)._unsafeUnwrap(),
-  calendar_id: CalendarId.create("1")._unsafeUnwrap(),
+  id: createEventId("1")._unsafeUnwrap(),
+  title: createTitle("Single Event")._unsafeUnwrap(),
+  start: createStart(new Date("2023-01-01"))._unsafeUnwrap(),
+  end: createUntil(new Date("2023-01-10"))._unsafeUnwrap(),
+  duration: createDuration(360000)._unsafeUnwrap(),
+  calendar_id: createCalendarId("1")._unsafeUnwrap(),
   is_all_day: true,
   is_recurring: true,
   rrule,

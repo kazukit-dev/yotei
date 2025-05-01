@@ -15,50 +15,46 @@ export type Frequency = Brand<
   (typeof FREQUENCIES)[keyof typeof FREQUENCIES],
   "Frequency"
 >;
-export const Frequency = {
-  create: (value: number): Result<Frequency, "InvalidFrequency"> => {
-    switch (value) {
-      case FREQUENCIES.YEARLY:
-      case FREQUENCIES.MONTHLY:
-      case FREQUENCIES.WEEKLY:
-      case FREQUENCIES.DAILY:
-        return ok(value as Frequency);
-      default:
-        return err("InvalidFrequency");
-    }
-  },
-} as const;
 
 export type Dtstart = Brand<Date, "Dtstart">;
-export const Dtstart = {
-  create: (
-    value: string | number | Date,
-  ): Result<Dtstart, "InvalidRRuleDtstart"> => {
-    return dayjs(value).isValid()
-      ? ok(new Date(value) as Dtstart)
-      : err("InvalidRRuleDtstart");
-  },
-};
 
 export type Until = Brand<Date, "Until">;
-export const Until = {
-  create: (
-    value: string | number | Date,
-  ): Result<Until, "InvalidRRuleUntil"> => {
-    return value && dayjs(value).isValid()
-      ? ok(new Date(value) as Until)
-      : err("InvalidRRuleUntil");
-  },
+
+export type RRule = {
+  freq: Frequency;
+  dtstart: Dtstart;
+  until: Until;
 };
 
-export type RRule = Brand<
-  {
-    freq: Frequency;
-    dtstart: Dtstart;
-    until: Until;
-  },
-  "RRule"
->;
+export const createFrequency = (
+  value: number,
+): Result<Frequency, "InvalidFrequency"> => {
+  switch (value) {
+    case FREQUENCIES.YEARLY:
+    case FREQUENCIES.MONTHLY:
+    case FREQUENCIES.WEEKLY:
+    case FREQUENCIES.DAILY:
+      return ok(value as Frequency);
+    default:
+      return err("InvalidFrequency");
+  }
+};
+
+export const createDtstart = (
+  value: string | number | Date,
+): Result<Dtstart, "InvalidRRuleDtstart"> => {
+  return dayjs(value).isValid()
+    ? ok(new Date(value) as Dtstart)
+    : err("InvalidRRuleDtstart");
+};
+
+export const createUntil = (
+  value: string | number | Date,
+): Result<Until, "InvalidRRuleUntil"> => {
+  return value && dayjs(value).isValid()
+    ? ok(new Date(value) as Until)
+    : err("InvalidRRuleUntil");
+};
 
 export type UnvalidatedRRule = {
   freq: number;
@@ -66,24 +62,22 @@ export type UnvalidatedRRule = {
   until: string | number | Date;
 };
 
-export const RRule = {
-  create: (input: UnvalidatedRRule): Result<RRule, string> => {
-    if (!compare(new Date(input.dtstart), "<", new Date(input.until))) {
-      return err("InvalidRRuleUntil");
-    }
+export const createRRule = (input: UnvalidatedRRule): Result<RRule, string> => {
+  if (!compare(new Date(input.dtstart), "<", new Date(input.until))) {
+    return err("InvalidRRuleUntil");
+  }
 
-    const freq = Frequency.create(input.freq);
-    const dtstart = Dtstart.create(input.dtstart);
-    const until = Until.create(input.until);
+  const freq = createFrequency(input.freq);
+  const dtstart = createDtstart(input.dtstart);
+  const until = createUntil(input.until);
 
-    return Result.combine([freq, dtstart, until]).map(
-      ([freq, dtstart, until]) => {
-        return {
-          freq,
-          dtstart,
-          until,
-        } as RRule;
-      },
-    );
-  },
+  return Result.combine([freq, dtstart, until]).map(
+    ([freq, dtstart, until]) => {
+      return {
+        freq,
+        dtstart,
+        until,
+      } as RRule;
+    },
+  );
 };

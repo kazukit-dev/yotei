@@ -27,35 +27,35 @@ export type UnvalidatedException = {
   type: string;
 };
 
-export const ExceptionDate = {
-  create: (value: string): Result<ExceptionDate, string> => {
-    return dayjs(value).isValid()
-      ? ok(new Date(value) as ExceptionDate)
-      : err("InvalidExceptionDate");
-  },
+export const createExceptionDate = (
+  value: string,
+): Result<ExceptionDate, string> => {
+  return dayjs(value).isValid()
+    ? ok(new Date(value) as ExceptionDate)
+    : err("InvalidExceptionDate");
 };
 
-export const ExceptionType = {
-  create: (value: string): Result<ExceptionType, "InvalidExceptionType"> => {
-    if (value !== "modified" && value !== "cancelled") {
-      return err("InvalidExceptionType");
-    }
-    return ok(value as ExceptionType);
-  },
+export const createExceptionType = (
+  value: string,
+): Result<ExceptionType, "InvalidExceptionType"> => {
+  if (value !== "modified" && value !== "cancelled") {
+    return err("InvalidExceptionType");
+  }
+  return ok(value as ExceptionType);
 };
 
-export const Exception = {
-  create: (input: UnvalidatedException): Result<Exception, string> => {
-    const exceptionDate = ExceptionDate.create(input.target_date);
-    const exceptionType = ExceptionType.create(input.type);
+export const createException = (
+  input: UnvalidatedException,
+): Result<Exception, string> => {
+  const exceptionDate = createExceptionDate(input.target_date);
+  const exceptionType = createExceptionType(input.type);
 
-    const values = Result.combine(tuple(exceptionDate, exceptionType));
+  const values = Result.combine(tuple(exceptionDate, exceptionType));
 
-    return values.map(([date, type]) => {
-      return {
-        target_date: date,
-        type,
-      } as Exception;
-    });
-  },
+  return values.map(([date, type]) => {
+    return {
+      target_date: date,
+      type,
+    } as Exception;
+  });
 };

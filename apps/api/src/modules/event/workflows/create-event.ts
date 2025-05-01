@@ -2,11 +2,18 @@ import { err, type Ok, ok, Result } from "neverthrow";
 
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
-import { Duration, type End, type Start, toDates } from "../objects/date";
+import {
+  createEnd,
+  createStart,
+  Duration,
+  type End,
+  type Start,
+  toDuration,
+} from "../objects/date";
 import type { Event } from "../objects/event/write";
-import { CalendarId, generateEventId } from "../objects/id";
-import { RRule, type Until } from "../objects/rrule/write";
-import { Title } from "../objects/title";
+import { CalendarId, createCalendarId, generateEventId } from "../objects/id";
+import { createRRule, RRule, type Until } from "../objects/rrule/write";
+import { createTitle, Title } from "../objects/title";
 
 type WorkflowError = ValidationError;
 
@@ -72,17 +79,18 @@ export const createEventWorkflow = (): Workflow => (command) => {
 };
 
 const validate: Validate = (event) => {
-  const calendarId = CalendarId.create(event.calendar_id);
-  const title = Title.create(event.title);
-  const dates = toDates({ start: event.start, end: event.end });
-  const duration = dates.andThen(Duration.create);
+  const calendarId = createCalendarId(event.calendar_id);
+  const title = createTitle(event.title);
+  const start = createStart(event.start);
+  const end = createEnd(event.end);
+  const duration = toDuration(event.start, event.end);
 
   if (!event.is_recurring) {
     const values = Result.combineWithAllErrors(
-      tuple(calendarId, title, dates, duration),
+      tuple(calendarId, title, start, end, duration),
     );
     return values
-      .map(([calendarId, title, { start, end }, duration]) => {
+      .map(([calendarId, title, start, end, duration]) => {
         const data = {
           calendar_id: calendarId,
           title,
@@ -101,16 +109,16 @@ const validate: Validate = (event) => {
     return err(new ValidationError(["MissingRRule"]));
   }
 
-  const rrule = RRule.create({
+  const rrule = createRRule({
     freq: event.rrule.freq,
     dtstart: event.start,
     until: event.rrule.until,
   });
   const values = Result.combineWithAllErrors(
-    tuple(calendarId, title, dates, duration, rrule),
+    tuple(calendarId, title, start, duration, rrule),
   );
   return values
-    .map(([calendarId, title, { start }, duration, rrule]) => {
+    .map(([calendarId, title, start, duration, rrule]) => {
       const data = {
         calendar_id: calendarId,
         title,
