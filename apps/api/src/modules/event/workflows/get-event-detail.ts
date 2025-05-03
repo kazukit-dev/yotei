@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import { err, ok, type Result } from "neverthrow";
 
 import type { ValidationError } from "../../../shared/errors";
-import type {} from "../objects/read/event";
 import { getRecurringDates } from "../objects/read/rrule";
 
 class NotFoundRecurringEvent extends Error {}
@@ -55,17 +54,13 @@ const findEvent: FindEvent = ({ event, input: { target_date } }) => {
     return err(new NotFoundRecurringEvent("Not found rrule."));
   }
 
-  const dtstart = new Date(event.rrule.dtstart);
-  const until = new Date(event.rrule.until);
-
-  const dates = getRecurringDates(
-    from,
-    to,
-  )({
+  const rrule = {
     ...event.rrule,
-    dtstart,
-    until,
-  });
+    dtstart: new Date(event.rrule.dtstart),
+    until: new Date(event.rrule.until),
+  };
+  const getDates = getRecurringDates(rrule);
+  const dates = getDates({ from, to });
 
   if (dates.length === 0) {
     return err(

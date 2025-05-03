@@ -1,17 +1,6 @@
-import { err, ok, Result } from "neverthrow";
-
 import dayjs from "../../../../shared/helpers/dayjs";
-import {
-  createException,
-  Exception,
-  type UnvalidatedException,
-} from "./exception";
-import {
-  createRRule,
-  getRecurringDates,
-  RRule,
-  type UnvalidatedRRule,
-} from "./rrule";
+import { Exception } from "./exception";
+import { getRecurringDates, RRule } from "./rrule";
 
 interface _Event {
   id: string;
@@ -37,48 +26,58 @@ interface RecurringEvent extends _Event {
 
 export type Event = SingleEvent | RecurringEvent;
 
-type UnvalidatedEvent = {
+type RawEvent = {
   id: string;
-  calendar_id: string;
   title: string;
   start: string;
   end: string;
+  calendar_id: string;
   duration: number;
   is_recurring: boolean;
   is_all_day: boolean;
-  exceptions: UnvalidatedException[];
-  rrule?: UnvalidatedRRule | null;
   version: number;
+  rrule: {
+    until: string;
+    freq: number;
+    dtstart: string;
+  } | null;
+  exceptions: {
+    target_date: string;
+    type: string;
+  }[];
 };
 
-export const createEvent = (input: UnvalidatedEvent): Result<Event, string> => {
-  const start = new Date(input.start);
-  const end = new Date(input.end);
-
-  if (!input.is_recurring) {
-    const model = input;
-    return ok({
-      ...model,
+export const toEventModel = (model: RawEvent): Event => {
+  const start = new Date(model.start);
+  const end = new Date(model.end);
+  if (!model.is_recurring) {
+    const { exceptions: _, rrule: _2, ...rest } = model;
+    return {
+      ...rest,
+      is_recurring: false,
       start,
       end,
-      is_recurring: false,
-    });
+    } as SingleEvent;
   }
 
-  if (!input.rrule) {
-    return err("ReadModelError");
-  }
-  const exceptions = input.exceptions.map(createException);
-  const rrule = createRRule(input.rrule);
+  const exceptions = model.exceptions.map((ex) => ({
+    ...ex,
+    target_date: new Date(ex.target_date),
+  }));
+  const rrule = {
+    freq: model.rrule!.freq,
+    until: new Date(model.rrule!.until),
+    dtstart: new Date(model.rrule!.dtstart),
+  };
 
-  return Result.combine(exceptions).map((exs) => ({
-    ...input,
+  return {
+    ...model,
     start,
     end,
+    exceptions,
     rrule,
     is_recurring: true,
-    exceptions: exs,
-  }));
+  } as RecurringEvent;
 };
 
 export interface Occurrence {
@@ -90,7 +89,7 @@ export interface Occurrence {
 }
 
 export const getOccurrences =
-  (from: Date, to: Date) =>
+  (range: { from: Date; to: Date }) =>
   (event: Event): Occurrence[] => {
     if (!event.is_recurring) {
       return [
@@ -110,10 +109,8 @@ export const getOccurrences =
       return prev;
     }, new Map<number, true>());
 
-    const occurrences = getRecurringDates(
-      from,
-      to,
-    )(event.rrule)
+    const getDates = getRecurringDates(event.rrule);
+    const occurrences = getDates(range)
       .filter((date) => !exHash.has(date.getTime()))
       .map((date) => {
         const start = date;

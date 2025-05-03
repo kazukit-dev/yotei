@@ -8,9 +8,9 @@ import { tuple } from "../../../shared/helpers/tuple";
 import { createAuthenticatedApp } from "../../../shared/hono";
 import { createCalendarId, createEventId } from "../objects/write/id";
 import { getEventDetail } from "../query-service/get-event-detail";
+import { getEvents } from "../query-service/get-events";
 import { deleteEvent } from "../repositories/delete-event";
 import { getEventById } from "../repositories/get-event";
-import { getEvents } from "../repositories/query-events";
 import { create, saveCreatedEvent } from "../repositories/save-created-event";
 import { updateEvent, upsert } from "../repositories/update-event";
 import {
@@ -23,9 +23,9 @@ import {
 } from "../workflows/delete-event";
 import { getEventDetailWorkflow } from "../workflows/get-event-detail";
 import {
-  createQueryWorkflow,
+  queryEventsWorkflow,
   toUnvalidatedQueryCommand,
-} from "../workflows/get-events";
+} from "../workflows/query-events";
 import {
   toUnvalidateUpdateCommand,
   updateEventWorkflow,
@@ -74,7 +74,7 @@ app.get("/", zValidator("query", getEventsSchema), async (c) => {
     calendarId,
     ...query,
   });
-  const workflow = createQueryWorkflow(getEvents(db));
+  const workflow = queryEventsWorkflow(getEvents(db));
   const result = ok(unvalidatedCommand).asyncAndThen(workflow);
 
   return await result.match(

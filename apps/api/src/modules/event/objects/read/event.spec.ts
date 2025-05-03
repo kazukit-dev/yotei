@@ -56,11 +56,13 @@ afterEach(() => {
 
 describe("getOccurrences", () => {
   test("should return occurrences for a single event", () => {
-    const from = new Date("2024-01-01");
-    const to = new Date("2024-01-02");
+    const range = {
+      from: new Date("2024-01-01"),
+      to: new Date("2024-01-02"),
+    };
     getRecurringDates.mockReturnValue(() => []);
 
-    const occurrences = getOccurrences(from, to)(singleEvent);
+    const occurrences = getOccurrences(range)(singleEvent);
 
     expect(occurrences).toHaveLength(1);
     expect(occurrences[0]).toEqual({
@@ -73,8 +75,10 @@ describe("getOccurrences", () => {
   });
 
   test("should return occurrences for a recurring event", () => {
-    const from = new Date("2024-01-01");
-    const to = new Date("2024-01-02");
+    const range = {
+      from: new Date("2024-01-01"),
+      to: new Date("2024-01-02"),
+    };
     getRecurringDates.mockReturnValue(() => [
       new Date("2023-10-01T10:00:00Z"),
       new Date("2023-10-02T10:00:00Z"),
@@ -83,17 +87,16 @@ describe("getOccurrences", () => {
       new Date("2023-10-05T10:00:00Z"),
     ]);
 
-    const occurrences = getOccurrences(
-      from,
-      to,
-    )(recurringEventWithoutExceptions);
+    const occurrences = getOccurrences(range)(recurringEventWithoutExceptions);
 
     expect(occurrences).toHaveLength(5);
   });
 
   test("should handle modified or cancelled exceptions in recurring events", () => {
-    const from = new Date("2024-01-01");
-    const to = new Date("2024-01-02");
+    const range = {
+      from: new Date("2024-01-01"),
+      to: new Date("2024-01-02"),
+    };
     getRecurringDates.mockReturnValue(() => [
       new Date("2023-10-01T10:00:00Z"),
       new Date("2023-10-02T10:00:00Z"),
@@ -102,7 +105,7 @@ describe("getOccurrences", () => {
       new Date("2023-10-05T10:00:00Z"),
     ]);
 
-    const occurrences = getOccurrences(from, to)(recurringEventWithExceptions);
+    const occurrences = getOccurrences(range)(recurringEventWithExceptions);
 
     expect(occurrences).toHaveLength(4);
     expect(occurrences).not.toContainEqual(

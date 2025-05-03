@@ -121,11 +121,14 @@ const toExceptionDate = (
     });
   }
 
+  const getDates = getRecurringDates(event.rrule);
+
   return exceptionDate.andThen((date) => {
     // event dates
     const from = dayjs(event.start).startOf("day").toDate();
     const to = dayjs(event.end).endOf("day").toDate();
-    const recurringDates = getRecurringDates(from, to)(event.rrule);
+
+    const recurringDates = getDates({ from, to });
     const foundEventDate = recurringDates.find((date) =>
       compare(date, "=", date),
     );
