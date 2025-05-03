@@ -1,5 +1,5 @@
 {
-  "name": "@time-blocker/web",
+  "name": "@yotei/web",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.13.1",
-    "@time-blocker/eslint-config": "workspace:*",
+    "@yotei/eslint-config": "workspace:*",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.19",

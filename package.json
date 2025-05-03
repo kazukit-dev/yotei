@@ -1,6 +1,6 @@
 {
-  "name": "time-blocker",
-  "version": "1.0.0",
+  "name": "yotei",
+  "version": "0.0.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "test:api": "pnpm --filter ./apps/api test",
@@ -9,9 +9,8 @@
     "format:all": "pnpm --filter './apps/*' format:fix"
   },
   "keywords": [
-    "time-blocker",
-    "calendar",
-    "react-router",
+    "scheduler",
+    "remix",
     "hono",
     "neverthrow"
   ],
@@ -23,5 +22,5 @@
   "engines": {
     "pnpm": ">=10.0.0"
   },
-  "packageManager": "pnpm@10.6.5"
+  "packageManager": "pnpm@10.10.0"
 }

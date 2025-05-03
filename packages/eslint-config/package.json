@@ -1,5 +1,5 @@
 {
-  "name": "@time-blocker/eslint-config",
+  "name": "@yotei/eslint-config",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
