@@ -7,8 +7,12 @@ import {
   ProviderId,
 } from "../objects/account";
 import { createUser, Email, User } from "../objects/user";
-import { ok, Result, ResultAsync } from "neverthrow";
-import { DBError, ValidationError } from "../../../shared/errors";
+import { err, Result, ResultAsync } from "neverthrow";
+import {
+  DBError,
+  EntityNotFound,
+  ValidationError,
+} from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 
 export const _findOauthUser =
@@ -53,14 +57,20 @@ export const findOauthUser =
     accountId: AccountId,
     email: Email,
   ): ResultAsync<
-    { user: User; account: Account } | null,
-    DBError | ValidationError
+    { user: User; account: Account },
+    DBError | ValidationError | EntityNotFound
   > => {
     return ResultAsync.fromPromise(
       _findOauthUser(db)(providerId, accountId, email),
       (err) => new DBError("Failed to find oauth user", { cause: err }),
     ).andThen((oauthUser) => {
-      if (!oauthUser) return ok(null);
+      if (!oauthUser) {
+        return err(
+          new EntityNotFound(
+            `OAuth user not found for provider ${providerId} and account ${accountId}`,
+          ),
+        );
+      }
 
       const user = createUser(oauthUser.user);
       const account = createAccount(oauthUser.account);

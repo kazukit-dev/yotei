@@ -5,7 +5,12 @@ import {
   Oauth2Code,
   Oauth2CodeVerifier,
 } from "../objects/oidc";
-import { AuthError, DBError, ValidationError } from "../../../shared/errors";
+import {
+  AuthError,
+  DBError,
+  EntityNotFound,
+  ValidationError,
+} from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 import {
   createEmail,
@@ -146,8 +151,8 @@ type FindOauth2User = (
   accountId: AccountId,
   email: Email,
 ) => ResultAsync<
-  { user: User; account: Account } | null,
-  DBError | ValidationError
+  { user: User; account: Account },
+  DBError | ValidationError | EntityNotFound
 >;
 type SaveOauthUser = (
   user: User,
@@ -278,21 +283,26 @@ const linkAccount: LinkAccount =
     const { provider_id: providerId, account_id: accountId } = account;
     const { email } = user;
 
-    return findOauth2User(providerId, accountId, email).andThen((dbUser) => {
-      if (dbUser) {
-        return ok({
+    return findOauth2User(providerId, accountId, email)
+      .andThen((dbUser) =>
+        ok({
           kind: "linked",
           user: dbUser.user,
-        } as const);
-      }
-
-      return saveOauthUser(user, account).andThen(() => {
-        return ok({
-          kind: "linked",
-          user,
-        } as const);
+        } as const),
+      )
+      .orElse((error) => {
+        // EntityNotFoundの場合は新しいユーザーを作成
+        if (error instanceof EntityNotFound) {
+          return saveOauthUser(user, account).andThen(() =>
+            ok({
+              kind: "linked",
+              user,
+            } as const),
+          );
+        }
+        // その他のエラー（DBError、ValidationError）はそのまま伝播
+        return err(error);
       });
-    });
   };
 
 const issueSession: IssueSession = (command) => {
