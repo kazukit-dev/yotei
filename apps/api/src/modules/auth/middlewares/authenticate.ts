@@ -1,35 +1,43 @@
 import { createMiddleware } from "hono/factory";
-import { ok } from "neverthrow";
+import { err, ok, okAsync } from "neverthrow";
 
 import { createDBClient } from "../../../db";
-import { AuthError } from "../../../shared/errors";
+import { AuthError, ValidationError } from "../../../shared/errors";
 import { AuthenticatedEnv } from "../../../shared/hono";
-import { getSession } from "../api/session";
-import { isSessionValid, Session } from "../objects/session/session";
+import { clearSession, getSession } from "../api/session";
+import { isSessionValid } from "../objects/session/session";
 import { createSessionId } from "../objects/session/session-id";
+import { deleteSession } from "../repositories/delete-session";
 import { findSession } from "../repositories/find-session";
 
-export const validateSession = (session: Session) => {
-  return ok(session)
-    .andThen(isSessionValid)
-    .mapErr((err) => new AuthError(err));
-};
+class SessionNotFoundError extends AuthError {}
 
 export const authenticate = createMiddleware<AuthenticatedEnv>(
   async (c, next) => {
     const sessionId = await getSession(c);
     const db = createDBClient(c.env.DATABASE_URL);
 
-    return await ok(sessionId)
+    const preprocess = ok(sessionId)
       .andThen(createSessionId)
-      .asyncAndThen(findSession(db))
-      .andThrough(validateSession)
+      .mapErr((err) => new ValidationError([err]))
+      .asyncAndThen(findSession(db));
+
+    return await preprocess
+      .andThrough((session) => {
+        const result = isSessionValid(session);
+        return result.isOk()
+          ? okAsync(session)
+          : deleteSession(db)(session.id).andThen(() =>
+              err(new SessionNotFoundError("Session was invalid or expired")),
+            );
+      })
       .match(
         async (result) => {
           c.set("userId", result.user_id);
           await next();
         },
         (err) => {
+          clearSession(c);
           throw new AuthError("Failed to authenticate", { cause: err });
         },
       );
