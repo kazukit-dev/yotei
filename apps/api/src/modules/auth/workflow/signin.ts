@@ -1,136 +1,331 @@
-import { err, ok, okAsync, Result, ResultAsync } from "neverthrow";
-
-import { verifyPassword } from "../objects/password";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 import {
-  AccessToken,
-  generateAccessToken,
-  generateRefreshToken,
-  hashRefreshToken,
-  RefreshToken,
-} from "../objects/token";
-import { User } from "../objects/user";
-import { generateExpiresAt, UserToken } from "../objects/user-token";
+  createOauth2Code,
+  createOauth2CodeVerifier,
+  Oauth2Code,
+  Oauth2CodeVerifier,
+} from "../objects/oidc";
+import { AuthError, DBError, ValidationError } from "../../../shared/errors";
+import { tuple } from "../../../shared/helpers/tuple";
+import {
+  createEmail,
+  generateUserId,
+  createUserName,
+  Email,
+  User,
+} from "../objects/user";
+import {
+  Session,
+  generateSessionExpiresAt,
+  generateSessionId,
+  generateSessionMaxAge,
+  SessionMaxAge,
+} from "../objects/session";
+import {
+  Account,
+  AccountId,
+  createAccountId,
+  createProviderId,
+  ProviderId,
+} from "../objects/account";
 
-class UserVerificationError extends Error {}
+class TokenExchangeError extends AuthError {}
+class TokenVerifyError extends AuthError {}
 
-type WorkflowError = UserVerificationError;
+type WorkflowError =
+  | TokenExchangeError
+  | TokenVerifyError
+  | ValidationError
+  | DBError;
 
-type CreatedUserToken = UserToken & { kind: "created" };
+type Oauth2Tokens = {
+  accessToken: string;
+  refreshToken: string;
+  idToken: string;
+  expiresIn: number;
+};
+
+type UserInfo = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+};
+
+type ExchangeCodeForToken = (
+  Oauth2Code: Oauth2Code,
+  codeVerifier: Oauth2CodeVerifier,
+) => ResultAsync<Oauth2Tokens, Error>;
+
+type VerifyIdToken = (
+  token: string,
+  params: {
+    audience: string;
+    expirationTime: number;
+    nonce?: string;
+  },
+) => ResultAsync<void, Error>;
+
+type GetUserInfo = (tokens: {
+  idToken: string;
+  accessToken: string;
+  refreshToken: string;
+}) => ResultAsync<UserInfo, Error>;
+
+export interface Provider {
+  providerId: string;
+  exchangeCodeForToken: ExchangeCodeForToken;
+  verifyIdToken: VerifyIdToken;
+  getUserInfo: GetUserInfo;
+}
 
 type UnvalidatedCommand = {
-  kind: "unverified";
-  user: User;
+  kind: "unvalidated";
   input: {
-    password: string;
+    code: string;
+    code_verifier: string;
   };
 };
 
-type UserVerified = {
+type ValidatedCommand = {
+  kind: "validated";
+  input: {
+    code: Oauth2Code;
+    code_verifier: Oauth2CodeVerifier;
+  };
+};
+
+type TokenExchanged = {
+  kind: "exchanged";
+  token: Oauth2Tokens;
+};
+
+type TokenVerified = {
   kind: "verified";
+  token: Oauth2Tokens;
+  userInfo: Omit<UserInfo, "emailVerified">;
+};
+
+type AccountCreated = {
+  kind: "account_created";
+  user: User;
+  account: Account;
+};
+
+type AccountLinked = {
+  kind: "linked";
   user: User;
 };
 
-type TokenGenerated = {
-  kind: "token_generated";
-  user: User;
-  tokens: {
-    access_token: AccessToken;
-    refresh_token: RefreshToken;
-  };
+type SessionIssued = {
+  kind: "session_issued";
+  session: Session & { max_age: SessionMaxAge };
 };
 
-type UserTokenCreated = {
-  kind: "user_token_created";
-  tokens: {
-    access_token: AccessToken;
-    refresh_token: RefreshToken;
-  };
-  userToken: CreatedUserToken;
-};
+type Validate = (
+  input: UnvalidatedCommand,
+) => Result<ValidatedCommand, ValidationError>;
 
-type VerifyUser = (
-  command: UnvalidatedCommand,
-) => Result<UserVerified, UserVerificationError>;
+type ExchangeToken = (
+  exchangeCodeForToken: ExchangeCodeForToken,
+) => (
+  command: ValidatedCommand,
+) => ResultAsync<TokenExchanged, TokenExchangeError>;
 
-type GenerateToken = (
-  command: UserVerified,
-) => ResultAsync<TokenGenerated, never>;
+type VerifyToken = (
+  clientId: string,
+  provider: Provider,
+) => (command: TokenExchanged) => ResultAsync<TokenVerified, TokenVerifyError>;
 
-type CreateUserToken = (
-  command: TokenGenerated,
-) => ResultAsync<UserTokenCreated, never>;
+type CreateAccount = (
+  providerId: string,
+) => (command: TokenVerified) => Result<AccountCreated, ValidationError>;
 
-type Workflow = (
-  command: UnvalidatedCommand,
-) => ResultAsync<UserTokenCreated, WorkflowError>;
+type FindOauth2User = (
+  providerId: ProviderId,
+  accountId: AccountId,
+  email: Email,
+) => ResultAsync<
+  { user: User; account: Account } | null,
+  DBError | ValidationError
+>;
+type SaveOauthUser = (
+  user: User,
+  account: Account,
+) => ResultAsync<void, DBError>;
 
-const verifyUser: VerifyUser = ({ user, input }) => {
-  const isValid = verifyPassword(input.password, user.hashed_password);
-  if (!isValid) return err(new UserVerificationError("Invalid password"));
+type LinkAccount = (
+  findOauth2User: FindOauth2User,
+  saveOauthUser: SaveOauthUser,
+) => (
+  command: AccountCreated,
+) => ResultAsync<AccountLinked, DBError | ValidationError>;
 
-  return ok({
-    kind: "verified",
-    user,
-  });
-};
+type IssueSession = (command: AccountLinked) => Result<SessionIssued, never>;
 
-const generateToken =
-  (accessTokenSecret: string): GenerateToken =>
-  ({ user }) => {
-    const payload = {
-      userId: user.id,
-    };
-    const genAccessToken = generateAccessToken(accessTokenSecret);
-    const refreshToken = generateRefreshToken();
+type SigninWorkflow = (
+  clientId: string,
+  provider: Provider,
+  findOauthUser: FindOauth2User,
+  saveOauthUser: SaveOauthUser,
+) => (command: UnvalidatedCommand) => ResultAsync<SessionIssued, WorkflowError>;
 
-    return ResultAsync.combine([genAccessToken(payload), refreshToken]).map(
-      ([accessToken, refreshToken]) => {
-        return {
-          kind: "token_generated",
-          user,
-          tokens: {
-            access_token: accessToken,
-            refresh_token: refreshToken,
+const validate: Validate = (command) => {
+  const code = createOauth2Code(command.input.code);
+  const codeVerifier = createOauth2CodeVerifier(command.input.code_verifier);
+
+  const values = tuple(code, codeVerifier);
+
+  return Result.combineWithAllErrors(values)
+    .map(
+      ([code, codeVerifier]) =>
+        ({
+          kind: "validated",
+          input: {
+            code,
+            code_verifier: codeVerifier,
           },
-        };
-      },
-    );
-  };
+        }) as const,
+    )
+    .mapErr((errors) => new ValidationError(errors));
+};
 
-const createUserToken: CreateUserToken = ({ tokens, user }) => {
-  const token = ok(tokens.refresh_token).andThen(hashRefreshToken);
-  const expiresAt = generateExpiresAt();
-
-  return Result.combine([token, expiresAt])
-    .map(([token, expiresAt]) => {
+const exchangeToken: ExchangeToken = (getTokens) => (command) => {
+  return getTokens(command.input.code, command.input.code_verifier)
+    .map((tokens) => {
       return {
-        kind: "created",
-        userId: user.id,
-        token,
-        expiresAt,
+        kind: "exchanged",
+        token: tokens,
       } as const;
     })
-    .asyncAndThen((userToken) => {
-      return okAsync({
-        kind: "user_token_created",
-        tokens,
-        userToken,
-      } as const);
+    .mapErr(
+      (error) =>
+        new TokenExchangeError("Failed to get credentials", { cause: error }),
+    );
+};
+
+const verifyToken: VerifyToken = (clientId, provider) => (command) => {
+  const verifyIdToken = (command: TokenExchanged) => {
+    return ok(command.token.idToken)
+      .asyncAndThrough((idToken) =>
+        provider.verifyIdToken(idToken, {
+          audience: clientId,
+          expirationTime: command.token.expiresIn,
+        }),
+      )
+      .mapErr(
+        (err) =>
+          new TokenVerifyError(
+            "An error occurred while verifying the idToken",
+            {
+              cause: err,
+            },
+          ),
+      );
+  };
+  const getUserInfo = (command: TokenExchanged) => {
+    return ok(command.token)
+      .asyncAndThen(provider.getUserInfo)
+      .andThen(({ emailVerified, ...userInfo }) => {
+        if (!emailVerified) {
+          return err(
+            new TokenVerifyError("Email is not verified by the provider"),
+          );
+        }
+        return ok({
+          ...command,
+          kind: "verified",
+          userInfo,
+        } as const);
+      });
+  };
+  return ok(command).asyncAndThrough(verifyIdToken).andThen(getUserInfo);
+};
+
+const createAccount: CreateAccount =
+  (providerId) =>
+  ({ userInfo }) => {
+    const accountId = createAccountId(userInfo.id);
+    const name = createUserName(userInfo.name);
+    const email = createEmail(userInfo.email);
+    const _provider = createProviderId(providerId);
+
+    const values = tuple(accountId, name, email, _provider);
+    return Result.combineWithAllErrors(values)
+      .map(([accountId, name, email, provider]) => {
+        const user = {
+          id: generateUserId(),
+          name,
+          email,
+        };
+        const account = {
+          account_id: accountId,
+          user_id: user.id,
+          provider_id: provider,
+        };
+        return {
+          kind: "account_created",
+          user,
+          account,
+        } as const;
+      })
+      .mapErr((errors) => new ValidationError(errors));
+  };
+
+const linkAccount: LinkAccount =
+  (findOauth2User, saveOauthUser) =>
+  ({ user, account }) => {
+    const { provider_id: providerId, account_id: accountId } = account;
+    const { email } = user;
+
+    return findOauth2User(providerId, accountId, email).andThen((dbUser) => {
+      if (dbUser) {
+        return ok({
+          kind: "linked",
+          user: dbUser.user,
+        } as const);
+      }
+
+      return saveOauthUser(user, account).andThen(() => {
+        return ok({
+          kind: "linked",
+          user,
+        } as const);
+      });
     });
+  };
+
+const issueSession: IssueSession = (command) => {
+  const session = {
+    id: generateSessionId(),
+    user_id: command.user.id,
+    expires_at: generateSessionExpiresAt(),
+    max_age: generateSessionMaxAge(),
+  } as const;
+  return ok({
+    ...command,
+    kind: "session_issued",
+    session,
+  } as const);
 };
 
-export const toUnvalidatedSigninCommand = (
-  user: User,
-  password: string,
-): UnvalidatedCommand => {
-  return { user, input: { password }, kind: "unverified" } as const;
+export const toUnvalidatedSigninCommand = (input: {
+  code: string;
+  code_verifier: string;
+}): UnvalidatedCommand => {
+  return {
+    kind: "unvalidated",
+    input,
+  } as const;
 };
 
-export const signinWorkflow =
-  (accessTokenSecret: string): Workflow =>
-  (command) => {
+export const signinWorkflow: SigninWorkflow =
+  (clientId, provider, findOauthUser, saveOauthUser) => (command) => {
     return ok(command)
-      .andThen(verifyUser)
-      .asyncAndThen(generateToken(accessTokenSecret))
-      .andThen(createUserToken);
+      .andThen(validate)
+      .asyncAndThen(exchangeToken(provider.exchangeCodeForToken))
+      .andThen(verifyToken(clientId, provider))
+      .andThen(createAccount(provider.providerId))
+      .andThen(linkAccount(findOauthUser, saveOauthUser))
+      .andThen(issueSession);
   };

@@ -1,1 +1,2 @@
-export { default as authRouter } from "./api/router";
+export { default as authV2Router } from "./api/router";
+export * from "./middleware/authenticate";

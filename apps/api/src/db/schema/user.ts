@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { accounts, sessions } from "./auth";
 
 export const users = pgTable("users", {
   id: uuid().primaryKey(),
@@ -10,23 +11,11 @@ export const users = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
-export const userRelation = relations(users, ({ one }) => ({
-  password: one(userPassword),
+export const userRelation = relations(users, ({ one, many }) => ({
   email: one(userEmail),
-  token: one(userToken),
+  account: one(accounts),
+  session: many(sessions),
 }));
-
-export const userPassword = pgTable("user_hashed_password", {
-  id: uuid().primaryKey().defaultRandom(),
-  hashed_password: text().notNull(),
-  user_id: uuid()
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  created_at: timestamp().defaultNow().notNull(),
-  updated_at: timestamp()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-});
 
 export const userEmail = pgTable("user_email", {
   id: uuid().primaryKey().defaultRandom(),
@@ -38,14 +27,4 @@ export const userEmail = pgTable("user_email", {
   updated_at: timestamp()
     .defaultNow()
     .$onUpdate(() => new Date()),
-});
-
-export const userToken = pgTable("user_token", {
-  id: uuid().primaryKey().defaultRandom(),
-  token: text().notNull(),
-  user_id: uuid()
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  expires_at: timestamp().notNull(),
-  created_at: timestamp().defaultNow().notNull(),
 });

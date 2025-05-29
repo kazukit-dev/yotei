@@ -1,0 +1,1 @@
+ALTER TABLE "auth0_login" ALTER COLUMN "id" SET DEFAULT gen_random_uuid();

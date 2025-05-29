@@ -64,6 +64,41 @@
       "when": 1745591692781,
       "tag": "0008_fixed_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1747839806825,
+      "tag": "0009_ambiguous_wrecker",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1747840213373,
+      "tag": "0010_overjoyed_glorian",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1747923849936,
+      "tag": "0011_faithful_spirit",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1748183644940,
+      "tag": "0012_flimsy_the_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1748273891352,
+      "tag": "0013_amused_trish_tilby",
+      "breakpoints": true
     }
   ]
 }

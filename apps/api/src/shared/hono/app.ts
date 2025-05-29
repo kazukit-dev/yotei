@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { BlankSchema, Env } from "hono/types";
+import { BlankSchema } from "hono/types";
 
-import { AuthenticatedEnv } from "./env";
+import { AuthenticatedEnv, Env } from "./env";
 
 export const createApp = <Path extends string>(): Hono<
   Env,
