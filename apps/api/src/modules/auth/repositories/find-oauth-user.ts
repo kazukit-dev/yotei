@@ -1,5 +1,13 @@
 import { and, eq } from "drizzle-orm";
+import { err, Result, ResultAsync } from "neverthrow";
+
 import { accounts, DB, userEmail, users } from "../../../db";
+import {
+  DBError,
+  EntityNotFound,
+  ValidationError,
+} from "../../../shared/errors";
+import { tuple } from "../../../shared/helpers/tuple";
 import {
   Account,
   AccountId,
@@ -7,13 +15,6 @@ import {
   ProviderId,
 } from "../objects/account";
 import { createUser, Email, User } from "../objects/user";
-import { err, Result, ResultAsync } from "neverthrow";
-import {
-  DBError,
-  EntityNotFound,
-  ValidationError,
-} from "../../../shared/errors";
-import { tuple } from "../../../shared/helpers/tuple";
 
 export const _findOauthUser =
   (db: DB) =>

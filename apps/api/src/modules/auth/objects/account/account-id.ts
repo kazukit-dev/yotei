@@ -1,4 +1,5 @@
 import { err, ok, Result } from "neverthrow";
+
 import { Brand } from "../../../../shared/helpers/brand";
 
 export type AccountId = Brand<string, "AccountId">;

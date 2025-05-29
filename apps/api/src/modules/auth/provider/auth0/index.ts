@@ -1,7 +1,8 @@
 import * as jose from "jose";
 import { err, ok, okAsync, ResultAsync } from "neverthrow";
-import { Provider } from "../../workflows/signin";
 import { z } from "zod";
+
+import { Provider } from "../../workflows/signin";
 
 type Oauth2Context = {
   baseUrl: string | URL;

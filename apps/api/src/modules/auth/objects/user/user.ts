@@ -1,8 +1,9 @@
 import { Result } from "neverthrow";
+
 import { tuple } from "../../../../shared/helpers/tuple";
 import { createEmail, Email } from "./email";
-import { UserId } from "./user-id";
 import { createUserName, UserName } from "./name";
+import { UserId } from "./user-id";
 
 export type User = {
   id: UserId;

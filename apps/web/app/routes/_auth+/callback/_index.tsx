@@ -1,5 +1,6 @@
 import { ClientActionFunction, redirect, useSubmit } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+
 import { signin } from "~/api/auth";
 import { login } from "~/libs/authv2";
 
@@ -13,7 +14,7 @@ export default function SigninV2() {
     }
     callbackProcessed.current = true;
     submit(null, { method: "post" });
-  }, []);
+  }, [submit]);
 
   return (
     <div>

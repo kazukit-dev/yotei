@@ -1,16 +1,16 @@
 import { zValidator } from "@hono/zod-validator";
+
+import { createDBClient } from "../../../db";
 import { createApp } from "../../../shared/hono";
-import { signinSchema } from "./schema";
+import { createAuth0Provider } from "../provider/auth0";
+import { findOauthUser } from "../repositories/find-oauth-user";
+import { saveOauthUser } from "../repositories/save-oauth-user";
+import { saveSession } from "../repositories/save-session";
 import {
   signinWorkflow,
   toUnvalidatedSigninCommand,
 } from "../workflows/signin";
-import { createDBClient } from "../../../db";
-import { saveSession } from "../repositories/save-session";
-import { authenticate } from "../middlewares/authenticate";
-import { createAuth0Provider } from "../provider/auth0";
-import { findOauthUser } from "../repositories/find-oauth-user";
-import { saveOauthUser } from "../repositories/save-oauth-user";
+import { signinSchema } from "./schema";
 import { setSession } from "./session";
 
 const app = createApp<"/auth">();
@@ -51,11 +51,6 @@ app.post("/signin", zValidator("json", signinSchema), async (c) => {
         throw err;
       },
     );
-});
-
-app.get("/status", authenticate, async (c) => {
-  // find user by user_id
-  // return
 });
 
 export default app;

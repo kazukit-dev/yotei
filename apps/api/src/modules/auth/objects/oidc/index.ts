@@ -1,4 +1,5 @@
-import { err, ok, Ok, Result } from "neverthrow";
+import { err, ok, Result } from "neverthrow";
+
 import { Brand } from "../../../../shared/helpers/brand";
 
 export type Oauth2Code = Brand<string, "Oauth2Code">;

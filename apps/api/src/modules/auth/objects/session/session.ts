@@ -1,10 +1,10 @@
 import { err, ok, Result } from "neverthrow";
+
+import { compare } from "../../../../shared/helpers/date";
+import { tuple } from "../../../../shared/helpers/tuple";
 import { createUserId, UserId } from "../user/user-id";
 import { createSessionExpiresAt, SessionExpiresAt } from "./expires";
 import { createSessionId, SessionId } from "./session-id";
-import { tuple } from "../../../../shared/helpers/tuple";
-import dayjs from "dayjs";
-import { compare } from "../../../../shared/helpers/date";
 
 export interface Session {
   id: SessionId;

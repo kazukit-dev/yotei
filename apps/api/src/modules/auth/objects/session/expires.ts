@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
-import { Brand } from "../../../../shared/helpers/brand";
 import { err, Ok, ok, Result } from "neverthrow";
+
+import { Brand } from "../../../../shared/helpers/brand";
 
 export type SessionExpiresAt = Brand<Date, "SessionExpiresAt">;
 

@@ -1,6 +1,7 @@
-import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { users } from "./user";
 import { relations } from "drizzle-orm";
+import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+
+import { users } from "./user";
 
 export const sessions = pgTable("sessions", {
   id: uuid().primaryKey(),

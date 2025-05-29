@@ -1,13 +1,14 @@
+import { eq } from "drizzle-orm";
 import { err, ResultAsync } from "neverthrow";
+
 import { DB, sessions, userEmail, users } from "../../../db";
-import { SessionId } from "../objects/session/session-id";
 import {
   DBError,
   EntityNotFound,
   ValidationError,
 } from "../../../shared/errors";
-import { eq } from "drizzle-orm";
 import { createSession, Session } from "../objects/session/session";
+import { SessionId } from "../objects/session/session-id";
 
 const _findSession =
   (db: DB) =>

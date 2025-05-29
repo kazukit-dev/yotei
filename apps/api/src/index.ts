@@ -2,15 +2,13 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
+import { CORS_ORIGIN } from "./config";
 import { errorHandler } from "./error-handler";
+import { authenticate,authV2Router  } from "./modules/auth";
 import { calendarRouter, checkCalendarPermission } from "./modules/calendar";
 import { eventRouter } from "./modules/event";
 import { userRouter } from "./modules/user";
 import { createAuthenticatedApp } from "./shared/hono";
-import { authV2Router } from "./modules/auth";
-import { getCookie } from "hono/cookie";
-import { CORS_ORIGIN } from "./config";
-import { authenticate } from "./modules/auth";
 
 const app = new Hono();
 

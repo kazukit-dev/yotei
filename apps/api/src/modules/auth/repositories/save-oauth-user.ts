@@ -1,8 +1,9 @@
 import { ResultAsync } from "neverthrow";
+
 import { accounts, DB, userEmail, users } from "../../../db";
+import { DBError } from "../../../shared/errors";
 import { Account } from "../objects/account";
 import { User } from "../objects/user";
-import { DBError } from "../../../shared/errors";
 
 const _saveOauthUser =
   (db: DB) =>

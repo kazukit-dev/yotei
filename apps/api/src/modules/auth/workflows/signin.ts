@@ -1,10 +1,5 @@
 import { err, ok, Result, ResultAsync } from "neverthrow";
-import {
-  createOauth2Code,
-  createOauth2CodeVerifier,
-  Oauth2Code,
-  Oauth2CodeVerifier,
-} from "../objects/oidc";
+
 import {
   AuthError,
   DBError,
@@ -13,26 +8,32 @@ import {
 } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 import {
-  createEmail,
-  generateUserId,
-  createUserName,
-  Email,
-  User,
-} from "../objects/user";
-import {
-  Session,
-  generateSessionExpiresAt,
-  generateSessionId,
-  generateSessionMaxAge,
-  SessionMaxAge,
-} from "../objects/session";
-import {
   Account,
   AccountId,
   createAccountId,
   createProviderId,
   ProviderId,
 } from "../objects/account";
+import {
+  createOauth2Code,
+  createOauth2CodeVerifier,
+  Oauth2Code,
+  Oauth2CodeVerifier,
+} from "../objects/oidc";
+import {
+  generateSessionExpiresAt,
+  generateSessionId,
+  generateSessionMaxAge,
+  Session,
+  SessionMaxAge,
+} from "../objects/session";
+import {
+  createEmail,
+  createUserName,
+  Email,
+  generateUserId,
+  User,
+} from "../objects/user";
 
 class TokenExchangeError extends AuthError {}
 class TokenVerifyError extends AuthError {}

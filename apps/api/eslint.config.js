@@ -1,3 +1,3 @@
-import { api } from "@time-blocker/eslint-config";
+import { api } from "@yotei/eslint-config";
 
 export default api;

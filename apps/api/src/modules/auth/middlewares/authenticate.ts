@@ -1,12 +1,13 @@
 import { createMiddleware } from "hono/factory";
 import { ok } from "neverthrow";
-import { createSessionId } from "../objects/session/session-id";
-import { findSession } from "../repositories/find-session";
+
 import { createDBClient } from "../../../db";
 import { AuthError } from "../../../shared/errors";
-import { getSession } from "../api/session";
 import { AuthenticatedEnv } from "../../../shared/hono";
+import { getSession } from "../api/session";
 import { isSessionValid, Session } from "../objects/session/session";
+import { createSessionId } from "../objects/session/session-id";
+import { findSession } from "../repositories/find-session";
 
 export const validateSession = (session: Session) => {
   return ok(session)

@@ -1,4 +1,5 @@
 import { Result } from "neverthrow";
+
 import { tuple } from "../../../../shared/helpers/tuple";
 import { AccountId, createAccountId } from "./account-id";
 import { createProviderId, ProviderId } from "./provider-id";

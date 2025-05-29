@@ -1,4 +1,5 @@
-import { redirect, useFetcher } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
+
 import { authorize } from "~/libs/authv2";
 
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? "";

@@ -1,3 +1,3 @@
-import { web } from "@time-blocker/eslint-config";
+import { web } from "@yotei/eslint-config";
 
 export default web;
