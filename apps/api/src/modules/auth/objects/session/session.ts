@@ -37,3 +37,4 @@ export const isSessionValid = (session: Session): Result<void, string> => {
   }
   return ok();
 };
+// railway的にここをどうするか 期限切れエラー→削除

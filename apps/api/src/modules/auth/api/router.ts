@@ -1,13 +1,16 @@
 import { zValidator } from "@hono/zod-validator";
 import { createApp } from "../../../shared/hono";
 import { signinSchema } from "./schema";
-import { signinWorkflow, toUnvalidatedSigninCommand } from "../workflow/signin";
+import {
+  signinWorkflow,
+  toUnvalidatedSigninCommand,
+} from "../workflows/signin";
 import { createDBClient } from "../../../db";
-import { saveSession } from "../repository/save-session";
-import { authenticate } from "../middleware/authenticate";
+import { saveSession } from "../repositories/save-session";
+import { authenticate } from "../middlewares/authenticate";
 import { createAuth0Provider } from "../provider/auth0";
-import { findOauthUser } from "../repository/find-oauth-user";
-import { saveOauthUser } from "../repository/save-oauth-user";
+import { findOauthUser } from "../repositories/find-oauth-user";
+import { saveOauthUser } from "../repositories/save-oauth-user";
 import { setSession } from "./session";
 
 const app = createApp<"/auth">();

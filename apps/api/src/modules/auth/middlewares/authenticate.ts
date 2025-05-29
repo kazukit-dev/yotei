@@ -1,10 +1,10 @@
 import { createMiddleware } from "hono/factory";
 import { ok } from "neverthrow";
 import { createSessionId } from "../objects/session/session-id";
-import { findSession } from "../repository/find-session";
+import { findSession } from "../repositories/find-session";
 import { createDBClient } from "../../../db";
 import { AuthError } from "../../../shared/errors";
-import { getAuthSession } from "../api/session";
+import { getSession } from "../api/session";
 import { AuthenticatedEnv } from "../../../shared/hono";
 import { isSessionValid, Session } from "../objects/session/session";
 
@@ -16,7 +16,7 @@ export const validateSession = (session: Session) => {
 
 export const authenticate = createMiddleware<AuthenticatedEnv>(
   async (c, next) => {
-    const sessionId = await getAuthSession(c);
+    const sessionId = await getSession(c);
     const db = createDBClient(c.env.DATABASE_URL);
 
     return await ok(sessionId)
