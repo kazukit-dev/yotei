@@ -1,11 +1,13 @@
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { BlankSchema } from "hono/types";
 import { ok, Result } from "neverthrow";
 
 import { createDBClient } from "../../../db";
+import { Env } from "../../../env";
 import { transaction } from "../../../shared/db/transaction";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
-import { createAuthenticatedApp } from "../../../shared/hono";
 import { createCalendarId, createEventId } from "../objects/write/id";
 import { getEventDetail } from "../query-service/get-event-detail";
 import { getEvents } from "../query-service/get-events";
@@ -38,7 +40,7 @@ import {
   updateEventSchema,
 } from "./schema";
 
-const app = createAuthenticatedApp<"/calendars/:calendarId/events">();
+const app = new Hono<Env, BlankSchema, "/calendars/:calendarId/events">();
 
 app.post("/", zValidator("json", createEventSchema), async (c) => {
   const client = createDBClient(c.env.DATABASE_URL);

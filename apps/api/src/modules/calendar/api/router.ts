@@ -1,8 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 import { ok } from "neverthrow";
 
 import { createDBClient } from "../../../db";
-import { createAuthenticatedApp } from "../../../shared/hono";
+import { Env } from "../../../env";
 import { getCalendars } from "../query-service/get-calendars";
 import { saveCreatedCalendar } from "../repositories/save-created-calendar";
 import {
@@ -11,7 +12,7 @@ import {
 } from "../workflow/create-calendar";
 import { createCalendarSchema } from "./schema";
 
-const app = createAuthenticatedApp<"/calendars">();
+const app = new Hono<Env>();
 
 app.get("/", async (c) => {
   const db = createDBClient(c.env.DATABASE_URL);

@@ -1,1 +1,1 @@
-export { default as eventRouter } from "./api/router";
+export { default as event } from "./api/router";

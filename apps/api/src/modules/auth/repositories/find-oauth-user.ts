@@ -19,7 +19,7 @@ import { createUser, Email, User } from "../objects/user";
 export const _findOauthUser =
   (db: DB) =>
   async (providerId: ProviderId, accountId: AccountId, email: Email) => {
-    const oauthUser = await db
+    const oauthUsers = await db
       .select({
         id: users.id,
         name: users.name,
@@ -36,17 +36,20 @@ export const _findOauthUser =
           eq(accounts.account_id, accountId),
           eq(userEmail.email, email),
         ),
-      );
+      )
+      .limit(1);
 
-    if (!oauthUser.length) return null;
+    if (!oauthUsers.length) return null;
+
+    const oauthUser = oauthUsers[0];
     const user = {
-      id: oauthUser[0].id,
-      name: oauthUser[0].name,
-      email: oauthUser[0].email,
+      id: oauthUser.id,
+      name: oauthUser.name,
+      email: oauthUser.email,
     };
     const account = {
-      provider_id: oauthUser[0].providerId,
-      account_id: oauthUser[0].accountId,
+      provider_id: oauthUser.providerId,
+      account_id: oauthUser.accountId,
     };
     return { user, account };
   };
@@ -65,6 +68,7 @@ export const findOauthUser =
       _findOauthUser(db)(providerId, accountId, email),
       (err) => new DBError("Failed to find oauth user", { cause: err }),
     ).andThen((oauthUser) => {
+      console.log("************************* ??");
       if (!oauthUser) {
         return err(
           new EntityNotFound(

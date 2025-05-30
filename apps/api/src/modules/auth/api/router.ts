@@ -1,7 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 
 import { createDBClient } from "../../../db";
-import { createApp } from "../../../shared/hono";
+import { Env } from "../../../env";
 import { createAuth0Provider } from "../provider/auth0";
 import { findOauthUser } from "../repositories/find-oauth-user";
 import { saveOauthUser } from "../repositories/save-oauth-user";
@@ -13,7 +14,7 @@ import {
 import { signinSchema } from "./schema";
 import { setSession } from "./session";
 
-const app = createApp<"/auth">();
+const app = new Hono<Env>();
 
 app.post("/signin", zValidator("json", signinSchema), async (c) => {
   const db = createDBClient(c.env.DATABASE_URL);

@@ -1,1 +1,1 @@
-export { default as userRouter } from "./api/router";
+export { default as user } from "./api/router";

@@ -4,30 +4,30 @@ import { logger } from "hono/logger";
 
 import { CORS_ORIGIN } from "./config";
 import { errorHandler } from "./error-handler";
-import { authenticate,authV2Router  } from "./modules/auth";
-import { calendarRouter, checkCalendarPermission } from "./modules/calendar";
-import { eventRouter } from "./modules/event";
-import { userRouter } from "./modules/user";
-import { createAuthenticatedApp } from "./shared/hono";
+import { auth, authenticate } from "./modules/auth";
+import { calendar, checkCalendarPermission } from "./modules/calendar";
+import { event } from "./modules/event";
+import { user } from "./modules/user";
 
 const app = new Hono();
 
 app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(logger());
 
+// public routes
 app.get("/health-check", (c) => {
-  return c.json({ message: "health check" }, 200);
+  return c.json({ message: "ok" }, 200);
 });
+app.route("/auth", auth);
 
-app.route("/auth", authV2Router);
+// protected routes
+app.use("/users/*", authenticate);
+app.route("/users", user);
 
-const authenticatedApp = createAuthenticatedApp<"/">();
-authenticatedApp.use(authenticate);
-authenticatedApp.route("/users", userRouter);
-authenticatedApp.route("/calendars", calendarRouter);
-authenticatedApp.use("/calendars/:calendarId/*", checkCalendarPermission);
-authenticatedApp.route("/calendars/:calendarId/events", eventRouter);
-app.route("/", authenticatedApp);
+app.use("/calendars/*", authenticate);
+app.route("/calendars", calendar);
+app.use("/calendars/:calendarId/*", checkCalendarPermission);
+app.route("/calendars/:calendarId/events", event);
 
 app.onError(errorHandler);
 
