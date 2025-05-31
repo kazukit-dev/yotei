@@ -6,22 +6,24 @@ import { type User } from "../objects/read/user";
 export const findUserById =
   (db: DB) =>
   async (userId: string): Promise<User | null> => {
-    const user = await db
+    const dbUser = await db
       .select({
         id: users.id,
         name: users.name,
         email: userEmail.email,
       })
       .from(users)
-      .where(eq(users.id, userId))
-      .innerJoin(userEmail, eq(users.id, userEmail.user_id));
+      .innerJoin(userEmail, eq(users.id, userEmail.user_id))
+      .limit(1)
+      .where(eq(users.id, userId));
 
-    if (!user.length) {
+    if (!dbUser.length) {
       return null;
     }
+    const user = dbUser[0];
     return {
-      id: user[0].id,
-      name: user[0].name,
-      email: user[0].email,
+      id: user.id,
+      name: user.name,
+      email: user.email,
     };
   };

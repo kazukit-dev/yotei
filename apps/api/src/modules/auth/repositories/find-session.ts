@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { err, ResultAsync } from "neverthrow";
 
-import { DB, sessions, userEmail, users } from "../../../db";
+import { DB, sessions } from "../../../db";
 import {
   DBError,
   EntityNotFound,
@@ -26,7 +26,7 @@ const _findSession =
         expiresAt: sessions.expires_at,
       })
       .from(sessions)
-      .innerJoin(userEmail, eq(userEmail.user_id, users.id))
+      .limit(1)
       .where(eq(sessions.id, sessionId));
 
     return session.length ? session[0] : null;

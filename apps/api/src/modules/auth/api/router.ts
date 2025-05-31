@@ -1,9 +1,12 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { ok } from "neverthrow";
 
-import { createDBClient } from "../../../db";
-import { Env } from "../../../env";
+import { AuthenticatedEnv } from "../../../env";
+import { authenticate } from "../middlewares/authenticate";
+import { createSessionId } from "../objects/session";
 import { createAuth0Provider } from "../provider/auth0";
+import { deleteSession } from "../repositories/delete-session";
 import { findOauthUser } from "../repositories/find-oauth-user";
 import { saveOauthUser } from "../repositories/save-oauth-user";
 import { saveSession } from "../repositories/save-session";
@@ -12,13 +15,18 @@ import {
   toUnvalidatedSigninCommand,
 } from "../workflows/signin";
 import { signinSchema } from "./schema";
-import { setSession } from "./session";
+import { clearSession, getSession, setSession } from "./session";
 
-const app = new Hono<Env>();
+const app = new Hono<AuthenticatedEnv>();
 
 app.post("/signin", zValidator("json", signinSchema), async (c) => {
-  const db = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
   const input = c.req.valid("json");
+
+  const sessionId = await getSession(c);
+  if (sessionId) {
+    return c.json({ message: "Already signed in" }, 200);
+  }
 
   const authUrl = c.env.OAUTH2_URL;
   const clientId = c.env.OAUTH2_CLIENT_ID;
@@ -45,7 +53,7 @@ app.post("/signin", zValidator("json", signinSchema), async (c) => {
       async ({ session }) => {
         const sessionId = session.id;
         await setSession(c, sessionId, session.max_age);
-        return c.json(undefined, 201);
+        return c.json({ message: "Signed in successfully" }, 201);
       },
       (err) => {
         console.error("Failed to signin", err);
@@ -54,4 +62,23 @@ app.post("/signin", zValidator("json", signinSchema), async (c) => {
     );
 });
 
+app.post("/signout", authenticate, async (c) => {
+  const db = c.get("db");
+  const sessionId = await getSession(c);
+
+  return ok(sessionId)
+    .andThen(createSessionId)
+    .asyncAndThen(deleteSession(db))
+    .match(
+      () => {
+        clearSession(c);
+        console.log("Session deleted successfully");
+        return c.body(null, 204);
+      },
+      (err) => {
+        console.error("Failed to delete session", err);
+        throw err;
+      },
+    );
+});
 export default app;

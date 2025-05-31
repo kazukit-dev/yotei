@@ -68,7 +68,6 @@ export const findOauthUser =
       _findOauthUser(db)(providerId, accountId, email),
       (err) => new DBError("Failed to find oauth user", { cause: err }),
     ).andThen((oauthUser) => {
-      console.log("************************* ??");
       if (!oauthUser) {
         return err(
           new EntityNotFound(

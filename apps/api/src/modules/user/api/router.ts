@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 
 import { createDBClient } from "../../../db";
-import { Env } from "../../../env";
+import { AuthenticatedEnv } from "../../../env";
 import { AuthError } from "../../../shared/errors";
 import { findUserById } from "../query-service/find-user-by-id";
 
-const app = new Hono<Env>();
+const app = new Hono<AuthenticatedEnv>();
 
 app.get("/me", async (c) => {
   const db = createDBClient(c.env.DATABASE_URL);

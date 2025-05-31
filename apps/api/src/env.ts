@@ -1,21 +1,40 @@
+import { z } from "zod";
+
 import { DB } from "./db";
 
-type Bindings = {
-  DATABASE_URL: string;
-  ACCESS_TOKEN_SECRET: string;
+const envSchema = z.object({
+  NODE_ENV: z.enum(["develop", "production"]),
+  // cors
+  CORS_ORIGIN: z.string().min(1),
+  // database
+  DATABASE_URL: z.string().min(1),
+  // OIDC
+  OAUTH2_URL: z.string().min(1),
+  OAUTH2_REDIRECT_URI: z.string().min(1),
+  OAUTH2_CLIENT_ID: z.string().min(1),
+  OAUTH2_CLIENT_SECRET: z.string().min(1),
+  // cookie
+  COOKIE_DOMAIN: z.string().min(1),
+  COOKIE_SECRET: z.string().min(1),
+});
 
-  OAUTH2_URL: string;
-  OAUTH2_REDIRECT_URI: string;
-  OAUTH2_CLIENT_ID: string;
-  OAUTH2_CLIENT_SECRET: string;
-};
+const env = envSchema.parse(process.env);
 
-type Variables = {
-  userId: string;
-  db?: DB;
-};
+type Bindings = z.infer<typeof envSchema>;
 
 export type Env = {
   Bindings: Bindings;
-  Variables: Variables;
+  Variables: {
+    db: DB;
+  };
 };
+
+export type AuthenticatedEnv = {
+  Bindings: Bindings;
+  Variables: {
+    userId: string;
+    db: DB;
+  };
+};
+
+export const CORS_ORIGIN = env.CORS_ORIGIN;

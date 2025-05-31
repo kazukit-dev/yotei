@@ -1,18 +1,27 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { createMiddleware } from "hono/factory";
 import { logger } from "hono/logger";
 
-import { CORS_ORIGIN } from "./config";
+import { createDBClient } from "./db";
+import { CORS_ORIGIN, Env } from "./env";
 import { errorHandler } from "./error-handler";
 import { auth, authenticate } from "./modules/auth";
 import { calendar, checkCalendarPermission } from "./modules/calendar";
 import { event } from "./modules/event";
 import { user } from "./modules/user";
 
-const app = new Hono();
+const app = new Hono<Env>();
 
 app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(logger());
+app.use(
+  createMiddleware(async (c, next) => {
+    const db = createDBClient(c.env.DATABASE_URL);
+    c.set("db", db);
+    await next();
+  }),
+);
 
 // public routes
 app.get("/health-check", (c) => {
