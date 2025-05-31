@@ -2,7 +2,8 @@ import { ClientActionFunction, redirect, useSubmit } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 
 import { signin } from "~/api/auth";
-import { login } from "~/libs/authv2";
+import { AuthError } from "~/api/error";
+import { login } from "~/libs/auth";
 
 export default function SigninV2() {
   const submit = useSubmit();
@@ -27,13 +28,16 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
+  try {
+    await login({
+      options: { code, state },
+      callback: async ({ code, codeVerifier }) => {
+        await signin({ code, codeVerifier });
+      },
+    });
+  } catch (err) {
+    throw new AuthError("Authentication failed", { cause: err });
+  }
 
-  await login({
-    options: { code, state },
-    callback: async ({ code, codeVerifier }) => {
-      await signin({ code, codeVerifier });
-    },
-  });
-
-  return redirect("/");
+  return redirect("/calendars");
 };

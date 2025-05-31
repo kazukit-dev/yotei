@@ -40,5 +40,10 @@ export const buildRequest = (
   const body = buildBody(options?.body);
   const headers = buildHeaders(options?.headers);
 
-  return new Request(url, { body, headers, method: options?.method });
+  return new Request(url, {
+    body,
+    headers,
+    method: options?.method,
+    credentials: "include",
+  });
 };

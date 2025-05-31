@@ -1,22 +1,25 @@
-const API_URL = import.meta.env.VITE_API_URL || "";
+import { handleApiError } from "../error";
+import apiClient from "../shared/client";
 
-export const signin = async (data: { code: string; codeVerifier: string }) => {
-  const url = new URL("/auth/signin", API_URL);
-
-  const request = new Request(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      code: data.code,
-      code_verifier: data.codeVerifier,
-    }),
+export const signin = async (data: {
+  code: string;
+  codeVerifier: string;
+}): Promise<void> => {
+  const result = await apiClient.post("/auth/signin", {
+    code: data.code,
+    code_verifier: data.codeVerifier,
   });
+  if (!result.ok) {
+    handleApiError(result.status);
+  }
+  return;
+};
 
-  const res = await fetch(request);
-  if (!res.ok) {
-    throw new Error("Failed to logged in");
+export const signout = async (): Promise<void> => {
+  const result = await apiClient.post<void>("/auth/signout", undefined);
+
+  if (!result.ok) {
+    handleApiError(result.status);
   }
   return;
 };

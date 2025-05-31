@@ -1,162 +1,178 @@
-export class AuthError extends Error {}
+const getAuthManager = (storage: Storage = localStorage) => {
+  const base64URLEncode = (buffer: Uint8Array<ArrayBuffer>): string => {
+    return btoa(String.fromCharCode(...buffer))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+  };
 
-export class Auth {
-  private baseURL: string;
-  private pendingProcess: Promise<void>[];
-  private locking: boolean;
+  const generateCodeVerifier = () => {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return base64URLEncode(array);
+  };
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-    this.pendingProcess = [];
-    this.locking = false;
-  }
+  const generateCodeChallenge = async (
+    verifier: string,
+    method: "plain" | "S256" = "S256",
+  ) => {
+    if (method === "plain") return verifier;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await crypto.subtle.digest("SHA-256", data);
+    return base64URLEncode(new Uint8Array(digest));
+  };
 
-  public isAuthenticated() {
-    return !!localStorage.getItem("refresh_token");
-  }
+  const generateState = (): string => {
+    return crypto.randomUUID();
+  };
 
-  public getAccessToken() {
-    return sessionStorage.getItem("access_token");
-  }
+  const begin = async () => {
+    const codeChallengeMethod = "S256" as const;
+    const codeVerifier = generateCodeVerifier();
+    const codeChallenge = await generateCodeChallenge(
+      codeVerifier,
+      codeChallengeMethod,
+    );
+    const state = generateState();
 
-  public async signin(data: { email: string; password: string }) {
-    return this._acquireLock(async () => {
-      await this._signin(data);
+    return {
+      codeChallengeMethod,
+      codeChallenge,
+      codeVerifier,
+      state,
+    };
+  };
+
+  const commit = (options: { codeVerifier: string; state: string }) => {
+    storage.setItem("code_verifier", options.codeVerifier);
+    storage.setItem("state", options.state);
+  };
+
+  const restore = () => {
+    const codeVerifier = storage.getItem("code_verifier");
+    const state = storage.getItem("state");
+
+    return {
+      codeVerifier,
+      state,
+    };
+  };
+
+  const clear = () => {
+    storage.removeItem("code_verifier");
+    storage.removeItem("state");
+  };
+
+  return {
+    begin,
+    commit,
+    restore,
+    clear,
+  };
+};
+
+const buildAuthorizeUrl = (
+  baseUrl: URL,
+  params: {
+    clientId: string;
+    codeChallenge: string;
+    codeChallengeMethod: "S256" | "plain";
+    responseType: "code";
+    redirectUri: string;
+    scope: string;
+    state: string;
+  },
+) => {
+  const url = new URL(baseUrl);
+  url.searchParams.set("code_challenge", params.codeChallenge);
+  url.searchParams.set("code_challenge_method", params.codeChallengeMethod);
+  url.searchParams.set("client_id", params.clientId);
+  url.searchParams.set("response_type", params.responseType);
+  url.searchParams.set("redirect_uri", params.redirectUri);
+  url.searchParams.set("scope", params.scope);
+  url.searchParams.set("state", params.state);
+
+  return url.toString();
+};
+
+type AuthorizeOptions = {
+  rootUrl: URL;
+  endpoint: string;
+  clientId: string;
+  responseType: "code";
+  redirectUri: string;
+  scope: string;
+  redirect: (url: string) => void;
+};
+
+export const authorize = async ({
+  endpoint,
+  rootUrl,
+  clientId,
+  responseType,
+  redirectUri,
+  scope,
+  redirect,
+}: AuthorizeOptions): Promise<void> => {
+  const manager = getAuthManager();
+
+  try {
+    const url = new URL(endpoint, rootUrl);
+
+    const { codeChallenge, codeChallengeMethod, codeVerifier, state } =
+      await manager.begin();
+
+    const authorizeUrl = buildAuthorizeUrl(url, {
+      clientId,
+      responseType,
+      codeChallenge,
+      codeChallengeMethod,
+      redirectUri,
+      state,
+      scope,
     });
-  }
 
-  public async signup(data: { name: string; email: string; password: string }) {
-    return await this._acquireLock(async () => {
-      this._signup(data);
-    });
-  }
+    manager.commit({ codeVerifier, state });
 
-  public async signout() {
-    return this._acquireLock(async () => {
-      await this._signout();
-    });
+    return redirect(authorizeUrl);
+  } catch (e) {
+    manager.clear();
+    throw e;
   }
+};
 
-  public async refreshToken() {
-    return this._acquireLock(async () => {
-      await this._refreshToken();
-    });
-  }
+type LoginOption = {
+  options: {
+    state?: string | null;
+    code?: string | null;
+  };
+  callback: (options: { code: string; codeVerifier: string }) => Promise<void>;
+};
 
-  private async _acquireLock(fn: () => Promise<void>) {
-    if (this.locking) {
-      const last = this.pendingProcess.length
-        ? this.pendingProcess[this.pendingProcess.length - 1]
-        : Promise.resolve();
-      const result = (async () => {
-        await last;
-        await fn();
-      })();
-      this.pendingProcess.push(result);
-      return result;
+export const login = async ({ options, callback }: LoginOption) => {
+  const { code, state } = options;
+
+  const manager = getAuthManager();
+  const { codeVerifier, state: storedState } = manager.restore();
+
+  try {
+    if (!code) {
+      throw new Error("Code is empty");
     }
-    this.locking = true;
-
-    try {
-      const result = await fn();
-      const processes = this.pendingProcess;
-      await Promise.all(processes);
-      this.pendingProcess = this.pendingProcess.slice(0, processes.length);
-      return result;
-    } finally {
-      this.locking = false;
+    if (!codeVerifier) {
+      throw new Error("Missing codeVerifier in storage");
     }
-  }
-
-  private async _refreshToken(): Promise<void> {
-    const url = new URL("/auth/refresh", this.baseURL);
-    const refreshToken = localStorage.getItem("refresh_token");
-    if (!refreshToken) {
-      throw new AuthError("Refresh token is empty");
+    if (!storedState) {
+      throw new Error("Missing state in storage");
     }
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({ refresh_token: refreshToken }),
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-      },
-    });
-    if (!res.ok) {
-      this._clearSession();
-      throw new AuthError("Token refresh error");
+
+    if (state !== storedState) {
+      throw new Error("Invalid state");
     }
-    const tokens = await res.json();
-    this._saveSession(tokens);
+
+    await callback({ code, codeVerifier });
+  } finally {
+    manager.clear();
   }
-
-  private async _signin(data: {
-    email: string;
-    password: string;
-  }): Promise<void> {
-    const url = new URL("/auth/signin", this.baseURL);
-
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-      },
-    });
-    if (!res.ok) {
-      throw new AuthError("Failed to signin");
-    }
-    const tokens = await res.json();
-    this._saveSession(tokens);
-  }
-
-  private async _signup(data: {
-    name: string;
-    email: string;
-    password: string;
-  }) {
-    const url = new URL("/auth/signup", this.baseURL);
-
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-      },
-    });
-    if (!res.ok) {
-      throw new AuthError("Failed to signup");
-    }
-  }
-
-  private async _signout() {
-    const url = new URL("/auth/signout", this.baseURL);
-    const refreshToken = localStorage.getItem("refresh_token");
-    if (!refreshToken) {
-      throw new AuthError("Refresh token is empty");
-    }
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({ refresh_token: refreshToken }),
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-      },
-    });
-    if (!res.ok) {
-      throw new AuthError("Failed to signout");
-    }
-    this._clearSession();
-  }
-
-  private _saveSession(tokens: {
-    access_token: string;
-    refresh_token: string;
-  }) {
-    sessionStorage.setItem("access_token", tokens.access_token);
-    localStorage.setItem("refresh_token", tokens.refresh_token);
-  }
-
-  private _clearSession() {
-    sessionStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-  }
-}
+};
