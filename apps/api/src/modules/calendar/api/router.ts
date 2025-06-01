@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { ok } from "neverthrow";
 
 import { createDBClient } from "../../../db";
-import { Env } from "../../../env";
+import { AuthenticatedEnv } from "../../../env";
 import { getCalendars } from "../query-service/get-calendars";
 import { saveCreatedCalendar } from "../repositories/save-created-calendar";
 import {
@@ -12,7 +12,7 @@ import {
 } from "../workflow/create-calendar";
 import { createCalendarSchema } from "./schema";
 
-const app = new Hono<Env>();
+const app = new Hono<AuthenticatedEnv>();
 
 app.get("/", async (c) => {
   const db = createDBClient(c.env.DATABASE_URL);

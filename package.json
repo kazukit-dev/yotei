@@ -3,13 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "test:api": "pnpm --filter ./apps/api test",
-    "dev:all": "pnpm --filter './apps/*' dev",
-    "lint:all": "pnpm --filter './apps/*' lint:fix",
-    "format:all": "pnpm --filter './apps/*' format:fix"
+    "dev:all": "turbo run dev",
+    "check:all": "turbo run lint:check format:check typecheck"
   },
   "keywords": [
-    "scheduler",
     "remix",
     "hono",
     "neverthrow"
@@ -17,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "only-allow": "^1.2.1"
+    "only-allow": "^1.2.1",
+    "turbo": "^2.5.4"
   },
   "engines": {
     "pnpm": ">=10.0.0"

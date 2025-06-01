@@ -16,6 +16,7 @@ interface Props
 const Select = ({ name, ...props }: Props) => {
   const [meta] = useField(name);
   const select = useSelect(meta);
+
   return <_Select {...props} {...select} />;
 };
 

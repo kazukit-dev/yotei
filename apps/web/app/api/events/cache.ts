@@ -43,14 +43,12 @@ export const removeEventListCache = (
   calendarId: string,
   eventRange: { start: string; end: string },
 ) => {
-  queryClient.removeQueries<
-    unknown,
-    Error,
-    ReturnType<(typeof eventKey)["list"] | (typeof eventKey)["lists"]>
-  >({
+  queryClient.removeQueries({
     queryKey: eventKey.lists(calendarId),
     predicate: (query) => {
-      const queryKey = query.queryKey;
+      const queryKey = query.queryKey as ReturnType<
+        (typeof eventKey)["list"] | (typeof eventKey)["lists"]
+      >;
       const filters = queryKey[4];
       if (!filters) return false;
       return inRange(eventRange, filters);

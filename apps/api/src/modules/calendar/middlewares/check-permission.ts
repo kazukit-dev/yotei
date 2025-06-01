@@ -1,7 +1,7 @@
 import { MiddlewareHandler } from "hono";
 
 import { createDBClient } from "../../../db";
-import { AuthenticatedEnv } from "../../../shared/hono";
+import { AuthenticatedEnv } from "../../../env";
 import { getCalendarById } from "../repositories/find-calendar-by-id";
 import {
   checkCalendarPermissionWorkflow,

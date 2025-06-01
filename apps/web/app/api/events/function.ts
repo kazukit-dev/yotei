@@ -1,6 +1,6 @@
 import type { Event, OperationPattern } from "~/models/event";
 
-import { ApiError } from "../error";
+import { handleApiError } from "../error";
 import client from "../shared/client";
 import type {
   CreateEventInput,
@@ -31,9 +31,7 @@ export const fetchEvents = async (
   if (result.ok) {
     return result.data;
   }
-  throw new ApiError("Failed to get events", result.status, {
-    cause: result.error,
-  });
+  return handleApiError(result.status);
 };
 
 export const createEvent = async (
@@ -43,7 +41,7 @@ export const createEvent = async (
   const path = `/calendars/${calendarId}/events`;
   const result = await client.post<Event>(path, data);
   if (!result.ok) {
-    throw new ApiError("Failed to create event.", result.status);
+    return handleApiError(result.status);
   }
   return result.data;
 };
@@ -56,7 +54,7 @@ export const updateEvent = async (
   const path = `/calendars/${calendarId}/events/${eventId}`;
   const result = await client.put(path, data);
   if (!result.ok) {
-    throw new ApiError("Failed to update event.", result.status);
+    return handleApiError(result.status);
   }
 };
 
@@ -68,7 +66,7 @@ export const deleteEvent = async (
   const path = `/calendars/${calendarId}/events/${eventId}`;
   const result = await client.delete<DeleteEventResponse>(path, data);
   if (!result.ok) {
-    throw new ApiError("Failed to delete event", result.status);
+    return handleApiError(result.status);
   }
   return result.data;
 };

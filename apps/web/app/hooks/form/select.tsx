@@ -8,7 +8,7 @@ export const useSelect = (meta: FieldMetadata<string>) => {
     name: meta.name,
     selectedKey: control.value ? control.value : null,
     // defaultSelectedKey: meta.initialValue ?? "",
-    onSelectionChange: (value: Key) => {
+    onSelectionChange: (value: Key | null) => {
       if (value) {
         control.change(value.toString());
       }
