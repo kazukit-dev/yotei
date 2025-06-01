@@ -133,6 +133,7 @@ yotei/
 - Use proper HTTP status codes
 - Validate all inputs with Zod
 - Handle errors gracefully with neverthrow
+- **Always run tests after making API changes**: `pnpm test:all`
 
 ### Frontend Development
 
@@ -212,9 +213,9 @@ pnpm install                 # Install dependencies
 ### Development
 
 ```bash
-pnpm dev:all                # Start all apps in development
-pnpm --filter ./apps/api dev # Start API only
-pnpm --filter ./apps/web dev # Start web only
+pnpm dev:all                 # Start all apps in development (turbo run dev)
+pnpm --filter ./apps/api dev # Start API only (wrangler dev)
+pnpm --filter ./apps/web dev # Start web only (remix vite:dev)
 ```
 
 ### Database
@@ -227,7 +228,9 @@ pnpm --filter ./apps/api db:migrate  # Run migrations
 ### Testing
 
 ```bash
-pnpm --filter ./apps/api test        # Run API tests
+pnpm test:all                        # Run all tests (turbo run test)
+pnpm --filter ./apps/api test        # Run API tests (vitest run)
+pnpm --filter ./apps/api test:watch  # Run API tests in watch mode (vitest)
 ```
 
 ### Quality Checks
@@ -236,16 +239,103 @@ pnpm --filter ./apps/api test        # Run API tests
 pnpm check:all              # Run all quality checks (lint, format, typecheck)
 ```
 
+### Package Management (pnpm workspace)
+
+#### Installing Dependencies
+
+```bash
+# Install dependencies for all workspaces
+pnpm install
+
+# Add a dependency to a specific workspace
+pnpm --filter ./apps/web add react-router
+pnpm --filter ./apps/api add hono
+
+# Add a dev dependency to a specific workspace
+pnpm --filter ./apps/web add -D vite
+pnpm --filter ./apps/api add -D typescript
+
+# Add a dependency to the root workspace
+pnpm add -w turbo
+
+# Add a dependency to multiple workspaces
+pnpm --filter "./apps/*" add dayjs
+```
+
+#### Managing Workspace Dependencies
+
+```bash
+# Use workspace protocol for internal dependencies
+pnpm --filter ./apps/web add @yotei/eslint-config@workspace:*
+
+# Remove a dependency from a specific workspace
+pnpm --filter ./apps/web remove old-package
+
+# Update dependencies in a specific workspace
+pnpm --filter ./apps/web update
+
+# Update all dependencies across all workspaces
+pnpm update -r
+```
+
+#### Running Scripts Across Workspaces
+
+```bash
+# Run a script in a specific workspace
+pnpm --filter ./apps/web dev
+pnpm --filter ./apps/api test
+
+# Run a script in all workspaces that have it
+pnpm -r run build
+
+# Run a script in multiple workspaces
+pnpm --filter "./apps/*" run typecheck
+
+# Run scripts with turbo (parallel execution)
+turbo run dev          # Run dev script in all apps
+turbo run build        # Run build script in all apps
+turbo run test         # Run test script in all apps
+```
+
+#### Workspace Filtering Examples
+
+```bash
+# Filter by workspace name
+pnpm --filter @yotei/web add react
+pnpm --filter @yotei/api add hono
+
+# Filter by directory path
+pnpm --filter ./apps/web add react
+pnpm --filter ./apps/api add hono
+
+# Filter by glob pattern
+pnpm --filter "./apps/*" add dayjs        # All apps
+pnpm --filter "./packages/*" add typescript # All packages
+
+# Filter with dependencies
+pnpm --filter ...@yotei/web run build     # Build web and its dependencies
+pnpm --filter @yotei/web^... run test     # Test web's dependencies
+```
+
 ## Important Notes
 
 1. **Always use pnpm** as the package manager
 2. **Follow monorepo patterns** - shared configs are in packages/
-3. **Use workspace dependencies** with `workspace:*` protocol
-4. **Maintain type safety** throughout the application
-5. **Handle errors properly** using Result types in API
-6. **Follow Remix conventions** for data loading and mutations
-7. **Use proper validation** with Zod schemas
-8. **Implement accessibility** with React Aria Components
+3. **Use workspace dependencies** with `workspace:*` protocol for internal packages
+4. **Use --filter flag** to target specific workspaces when installing packages
+5. **Maintain type safety** throughout the application
+6. **Handle errors properly** using Result types in API
+7. **Follow Remix conventions** for data loading and mutations
+8. **Use proper validation** with Zod schemas
+9. **Implement accessibility** with React Aria Components
+
+### pnpm Workspace Best Practices
+
+- **Internal Dependencies**: Always use `workspace:*` protocol for internal package dependencies
+- **Filtering**: Use `--filter` to target specific workspaces instead of navigating to directories
+- **Root Dependencies**: Use `-w` flag when adding dependencies to the root workspace
+- **Turbo Integration**: Prefer `turbo run` for running scripts across multiple workspaces
+- **Dependency Updates**: Use `-r` flag to update dependencies recursively across all workspaces
 
 ## When Making Changes
 
@@ -273,6 +363,7 @@ pnpm check:all              # Run all quality checks (lint, format, typecheck)
 3. Update frontend API client
 4. Ensure proper error handling
 5. Update types if necessary
+6. **Run tests after API changes**: `pnpm test:all`
 
 ## Post-Development Workflow
 

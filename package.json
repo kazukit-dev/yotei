@@ -4,7 +4,8 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev:all": "turbo run dev",
-    "check:all": "turbo run lint:check format:check typecheck"
+    "check:all": "turbo run lint:check format:check typecheck",
+    "test:all": "turbo run test"
   },
   "keywords": [
     "remix",

@@ -10,6 +10,9 @@
     "format:check": {
       "dependsOn": ["^format:check"]
     },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "dev": {
       "persistent": true,
       "cache": false
