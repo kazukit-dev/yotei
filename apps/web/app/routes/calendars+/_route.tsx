@@ -1,4 +1,10 @@
-import { Outlet, redirect, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Outlet,
+  redirect,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+} from "@remix-run/react";
 
 import { signout } from "~/api/auth";
 import { getMe } from "~/api/user";
@@ -16,6 +22,7 @@ export const clientLoader = withAuthRedirectLoader(async () => {
 
 export default function Index() {
   const { me } = useLoaderData<typeof clientLoader>();
+  const navigate = useNavigate();
   const fetcher = useFetcher();
 
   const handleSignout = async () => {
@@ -27,10 +34,17 @@ export default function Index() {
       },
     );
   };
+  const handleLogoClick = () => {
+    navigate("/calendars");
+  };
 
   return (
     <>
-      <Header user={me} onSignout={handleSignout} />
+      <Header
+        user={me}
+        onSignout={handleSignout}
+        onLogoClick={handleLogoClick}
+      />
       <Outlet />
     </>
   );

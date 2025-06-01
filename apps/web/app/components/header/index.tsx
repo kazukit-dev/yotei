@@ -5,13 +5,16 @@ import { ProfileMenu } from "./profile";
 interface Props {
   user: User;
   onSignout: () => void;
+  onLogoClick: () => void;
 }
 
-export const Header: React.FC<Props> = ({ user, onSignout }) => {
+export const Header: React.FC<Props> = ({ user, onSignout, onLogoClick }) => {
   return (
     <div className="flex h-14 w-full items-center justify-between border-b">
       <div className="pl-5">
-        <span className="text-3xl font-extrabold text-black">LOGO</span>
+        <button onClick={() => onLogoClick()}>
+          <span className="text-3xl font-extrabold text-black">LOGO</span>
+        </button>
       </div>
 
       <div className="pr-5">
