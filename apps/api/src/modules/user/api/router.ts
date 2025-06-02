@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { createDBClient } from "../../../db";
 import { AuthenticatedEnv } from "../../../env";
 import { AuthError } from "../../../shared/errors";
-import { findUserById } from "../query-service/find-user-by-id";
+import { findUserById } from "../query-services/find-user-by-id";
 
 const app = new Hono<AuthenticatedEnv>();
 

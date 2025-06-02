@@ -4,12 +4,12 @@ import { ok } from "neverthrow";
 
 import { createDBClient } from "../../../db";
 import { AuthenticatedEnv } from "../../../env";
-import { getCalendars } from "../query-service/get-calendars";
+import { getCalendars } from "../query-services/get-calendars";
 import { saveCreatedCalendar } from "../repositories/save-created-calendar";
 import {
   createCalendarWorkflow,
   toUnvalidatedCalendar,
-} from "../workflow/create-calendar";
+} from "../workflows/create-calendar";
 import { createCalendarSchema } from "./schema";
 
 const app = new Hono<AuthenticatedEnv>();

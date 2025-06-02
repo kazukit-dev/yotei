@@ -6,7 +6,7 @@ import { getCalendarById } from "../repositories/find-calendar-by-id";
 import {
   checkCalendarPermissionWorkflow,
   toUnvalidatedCommand,
-} from "../workflow/check-calendar-permission";
+} from "../workflows/check-calendar-permission";
 
 export const checkCalendarPermission: MiddlewareHandler<
   AuthenticatedEnv

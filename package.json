@@ -9,7 +9,7 @@
     "check:web": "turbo run lint:check format:check typecheck --filter=@yotei/web",
     "test:all": "turbo run test",
     "test:api": "turbo run test --filter=@yotei/api",
-    "prepare": "husky"
+    "prepare": "cd .. && husky"
   },
   "keywords": [
     "remix",
