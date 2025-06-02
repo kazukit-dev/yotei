@@ -10,8 +10,7 @@
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "typecheck": "tsc --noEmit",
-    "validate": "pnpm run lint:check && pnpm run format:check && pnpm run typecheck"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@conform-to/react": "~1.1.5",

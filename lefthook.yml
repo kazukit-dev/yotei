@@ -1,0 +1,8 @@
+pre-commit:
+  jobs:
+    - name: check api
+      glob: "apps/api/**/*.{ts,js}"
+      run: pnpm run check:api
+    - name: check web
+      glob: "apps/web/**/*.{ts,js}"
+      run: pnpm run check:web
