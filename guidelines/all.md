@@ -41,6 +41,26 @@ This document contains all development guidelines for the Yotei project.
 - Use Tailwind CSS for styling
 - Follow consistent naming conventions
 
+## Command Execution Guidelines
+
+### Working Directory
+
+- **Always execute commands from the project root directory**: `/Users/kazuki/developments/yotei/`
+- Use workspace-aware commands to target specific apps/packages
+- Avoid navigating to subdirectories to run commands
+
+### Command Structure
+
+```bash
+# From project root - CORRECT
+pnpm run test:api
+pnpm run check:api
+pnpm --filter ./apps/api test
+
+# From subdirectory - AVOID
+cd apps/api && pnpm test
+```
+
 ## Package Management Guidelines
 
 ### pnpm Workspace
@@ -95,11 +115,20 @@ This document contains all development guidelines for the Yotei project.
 
 ## Testing Guidelines
 
-### Test Structure
+### Test Strategy
 
-- Write unit tests for business logic
-- Test API endpoints
-- Use Vitest for testing
+- **Focus on business logic**: Test domain objects and workflows primarily
+- **Skip infrastructure layers**: query-services and repositories don't need unit tests
+- **Use integration tests**: For data layer and end-to-end scenarios
+- See detailed guidelines: [Testing Guidelines](./testing-guidelines.md)
+
+### Test File Conventions
+
+- **File naming**: Use `*.spec.ts` pattern only (`.test.ts` is prohibited)
+- **File location**: Colocate test files with source files in the same directory
+- **Examples**:
+  - ✅ `calendar.spec.ts` (in same directory as `calendar.ts`)
+  - ❌ `calendar.test.ts` or separate test directories
 
 ### Test Commands
 

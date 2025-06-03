@@ -5,6 +5,10 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
+    "noImplicitAny": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["ESNext"],
     "types": ["@cloudflare/workers-types/2023-07-01"]
   }

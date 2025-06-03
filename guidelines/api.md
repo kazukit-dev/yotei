@@ -529,6 +529,19 @@ export const authenticate = createMiddleware<AuthenticatedEnv>(
 
 ## Testing Guidelines
 
+### Test File Conventions
+
+- **File naming**: Use `*.spec.ts` pattern only (`.test.ts` is prohibited)
+- **File location**: Colocate test files with source files in the same directory
+- **Structure example**:
+  ```
+  modules/calendar/objects/write/
+  ├── calendar.ts          # Source file
+  ├── calendar.spec.ts     # Test file (colocated)
+  ├── name.ts             # Source file
+  └── name.spec.ts        # Test file (colocated)
+  ```
+
 ### Unit Tests
 
 ```typescript
