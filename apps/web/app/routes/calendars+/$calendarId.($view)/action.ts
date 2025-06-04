@@ -1,5 +1,5 @@
-import type { ClientActionFunctionArgs } from "@remix-run/react";
 import dayjs from "dayjs";
+import type { ClientActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { createNewEvent, deleteEvent } from "~/api/events";

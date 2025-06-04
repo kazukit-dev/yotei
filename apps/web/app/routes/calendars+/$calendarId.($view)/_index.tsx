@@ -1,10 +1,10 @@
+import { useState } from "react";
 import {
   useLoaderData,
   useNavigate,
   useNavigation,
   useSubmit,
-} from "@remix-run/react";
-import { useState } from "react";
+} from "react-router";
 
 import _Calendar, { type ViewType } from "~/components/calendar";
 import { EventCreateDialog } from "~/components/dialog/event-create-dialog";

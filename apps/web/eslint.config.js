@@ -1,3 +1,3 @@
 import { web } from "@yotei/eslint-config";
 
-export default web;
+export default [{ ignores: [".react-router"] }, ...web];

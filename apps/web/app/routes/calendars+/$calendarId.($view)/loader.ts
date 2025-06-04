@@ -1,5 +1,5 @@
-import type { ClientLoaderFunctionArgs } from "@remix-run/react";
 import dayjs from "dayjs";
+import type { ClientLoaderFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { getEvents } from "~/api/events";

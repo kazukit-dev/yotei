@@ -1,3 +1,5 @@
+import {} from "lucide-react";
+import { Suspense, useEffect } from "react";
 import {
   Await,
   type ClientActionFunctionArgs,
@@ -6,9 +8,7 @@ import {
   useLoaderData,
   useLocation,
   useNavigate,
-} from "@remix-run/react";
-import {} from "lucide-react";
-import { Suspense, useEffect } from "react";
+} from "react-router";
 
 import { getEventDetail, updateEvent } from "~/api/events";
 import type { UpdateEventInput } from "~/api/events/type";

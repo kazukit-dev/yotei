@@ -2,7 +2,7 @@ import {
   ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
   redirect,
-} from "@remix-run/react";
+} from "react-router";
 
 import { AuthError } from "~/api/error";
 
