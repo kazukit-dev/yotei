@@ -30,7 +30,7 @@
     "@cloudflare/workers-types": "^4.20250531.0",
     "@yotei/eslint-config": "workspace:*",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.30.6",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^9.28.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
