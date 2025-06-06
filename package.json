@@ -7,6 +7,9 @@
     "check:all": "turbo run lint:check format:check typecheck",
     "check:api": "turbo run lint:check format:check typecheck --filter=@yotei/api",
     "check:web": "turbo run lint:check format:check typecheck --filter=@yotei/web",
+    "fix:all": "turbo run lint:fix format:fix",
+    "fix:api": "turbo run lint:fix format:fix --filter=@yotei/api",
+    "fix:web": "turbo run lint:fix format:fix --filter=@yotei/web",
     "test:all": "turbo run test",
     "test:api": "turbo run test --filter=@yotei/api"
   },

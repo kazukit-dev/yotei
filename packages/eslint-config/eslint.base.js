@@ -4,10 +4,12 @@ import eslintPluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import eslintPluginUnusedImports from "eslint-plugin-unused-imports";
 import eslintPluginPromise from "eslint-plugin-promise";
 import tseslint from "typescript-eslint";
+import vitest from "@vitest/eslint-plugin";
 
 export default tseslint.config(
   eslintConfigPrettier,
   tseslint.configs.recommended,
+  vitest.configs.recommended,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
   },
