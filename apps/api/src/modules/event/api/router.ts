@@ -42,7 +42,7 @@ import {
 const app = new Hono<Env, BlankSchema, "/calendars/:calendarId/events">();
 
 app.post("/", zValidator("json", createEventSchema), async (c) => {
-  const client = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
   const { calendarId } = c.req.param();
   const schema = c.req.valid("json");
 
@@ -53,7 +53,7 @@ app.post("/", zValidator("json", createEventSchema), async (c) => {
   });
   const result = ok(unvalidatedEvent)
     .andThen(workflow)
-    .asyncAndThen(saveCreatedEvent(client));
+    .asyncAndThen(saveCreatedEvent(db));
 
   return await result.match(
     () => {
@@ -121,7 +121,7 @@ app.put("/:eventId", zValidator("json", updateEventSchema), async (c) => {
 });
 
 app.get("/:eventId", zValidator("query", getEventDetailSchema), async (c) => {
-  const db = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
   const { calendarId, eventId } = c.req.param();
   const query = c.req.valid("query");
 
@@ -147,7 +147,7 @@ app.get("/:eventId", zValidator("query", getEventDetailSchema), async (c) => {
 });
 
 app.delete("/:eventId", zValidator("json", deleteEventSchema), async (c) => {
-  const db = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
   const params = c.req.param();
   const { pattern, target_date } = c.req.valid("json");
 
