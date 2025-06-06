@@ -5,7 +5,6 @@ import { ok, Result } from "neverthrow";
 
 import { createDBClient } from "../../../db";
 import { Env } from "../../../env";
-import { transaction } from "../../../shared/db/transaction";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
 import { createCalendarId, createEventId } from "../objects/write/id";
@@ -13,8 +12,8 @@ import { getEventDetail } from "../query-services/get-event-detail";
 import { getEvents } from "../query-services/get-events";
 import { deleteEvent } from "../repositories/delete-event";
 import { getEventById } from "../repositories/get-event";
-import { create, saveCreatedEvent } from "../repositories/save-created-event";
-import { updateEvent, upsert } from "../repositories/update-event";
+import { saveCreatedEvent } from "../repositories/save-created-event";
+import { updateEvent } from "../repositories/update-event";
 import {
   createEventWorkflow,
   toUnvalidatedEvent,
@@ -90,7 +89,7 @@ app.get("/", zValidator("query", getEventsSchema), async (c) => {
 });
 
 app.put("/:eventId", zValidator("json", updateEventSchema), async (c) => {
-  const client = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
   const params = c.req.param();
   const input = c.req.valid("json");
 
@@ -104,21 +103,13 @@ app.put("/:eventId", zValidator("json", updateEventSchema), async (c) => {
 
   const process = values
     .asyncAndThen(([calendarId, eventId]) =>
-      getEventById(client)(calendarId, eventId),
+      getEventById(db)(calendarId, eventId),
     )
     .map((event) => toUnvalidateUpdateCommand(input, event));
 
   return await process
     .andThen(workflow)
-    .andThen((result) => {
-      return transaction(client)(async (tx) => {
-        await upsert(tx)(result.update);
-        if (result.create) {
-          await create(tx)(result.create);
-        }
-        return;
-      });
-    })
+    .andThen(updateEvent(db))
     .match(
       () => {
         return c.json(null, 201);
@@ -176,17 +167,10 @@ app.delete("/:eventId", zValidator("json", deleteEventSchema), async (c) => {
 
   return await process
     .andThen(deleteEventWorkflow)
-    .andThen(({ event, affected_range }) => {
-      switch (event.kind) {
-        case "deleted":
-          return deleteEvent(db)(event).andThen(() => ok({ affected_range }));
-        case "updated":
-          return updateEvent(db)(event).andThen(() => ok({ affected_range }));
-      }
-    })
+    .andThrough(({ event }) => deleteEvent(db)(event))
     .match(
-      (result) => {
-        return c.json(result, 200);
+      ({ affected_range }) => {
+        return c.json({ affected_range }, 200);
       },
       (err) => {
         throw err;

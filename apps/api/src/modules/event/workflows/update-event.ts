@@ -57,7 +57,7 @@ type ValidatedCommand = {
   event: Event;
 };
 
-type UpdatedEvent = {
+export type UpdatedEvent = {
   update: Event & { kind: "updated" };
   create?: Event & { kind: "created" };
 };
