@@ -1,15 +1,19 @@
 {
+  "private": true,
   "name": "@yotei/eslint-config",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "exports": {
+    "./base": "./base.js",
+    "./browser": "./browser.js",
+    "./node": "./node.js",
+    "./react": "./react.js"
+  },
   "scripts": {},
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@eslint/js": "^9.28.0",
     "@vitest/eslint-plugin": "^1.2.1",
-    "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import-x": "^4.15.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -22,5 +26,11 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.2.0",
     "typescript-eslint": "^8.33.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.28.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
   }
 }

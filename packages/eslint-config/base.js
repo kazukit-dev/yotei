@@ -7,12 +7,8 @@ import tseslint from "typescript-eslint";
 import vitest from "@vitest/eslint-plugin";
 
 export default tseslint.config(
-  eslintConfigPrettier,
   tseslint.configs.recommended,
   vitest.configs.recommended,
-  {
-    files: ["**/*.{js,jsx,ts,tsx}"],
-  },
   {
     languageOptions: {
       parserOptions: {
@@ -63,7 +59,6 @@ export default tseslint.config(
       "unused-imports/no-unused-imports": "error",
     },
   },
-  {
-    ...eslintPluginPromise.configs["flat/recommended"],
-  }
+  eslintPluginPromise.configs["flat/recommended"],
+  eslintConfigPrettier
 );

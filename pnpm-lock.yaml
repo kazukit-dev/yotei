@@ -201,16 +201,13 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.29)(jiti@1.21.7)(yaml@2.8.0))
 
   packages/eslint-config:
-    devDependencies:
+    dependencies:
       '@eslint/js':
         specifier: ^9.28.0
         version: 9.28.0
       '@vitest/eslint-plugin':
         specifier: ^1.2.1
         version: 1.2.1(eslint@9.28.0(jiti@1.21.7))(typescript@5.8.3)(vitest@3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(jiti@1.21.7)(yaml@2.8.0))
-      eslint:
-        specifier: ^9.28.0
-        version: 9.28.0(jiti@1.21.7)
       eslint-config-prettier:
         specifier: ^10.1.5
         version: 10.1.5(eslint@9.28.0(jiti@1.21.7))
@@ -247,6 +244,10 @@ importers:
       typescript-eslint:
         specifier: ^8.33.0
         version: 8.33.0(eslint@9.28.0(jiti@1.21.7))(typescript@5.8.3)
+    devDependencies:
+      eslint:
+        specifier: ^9.28.0
+        version: 9.28.0(jiti@1.21.7)
 
 packages:
 

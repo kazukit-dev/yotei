@@ -1,3 +1,10 @@
-import { api } from "@yotei/eslint-config";
+import base from "@yotei/eslint-config/base";
+import node from "@yotei/eslint-config/node";
 
-export default api;
+export default [
+  {
+    ignores: [".wrangler"],
+  },
+  ...base,
+  ...node,
+];
