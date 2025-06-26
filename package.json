@@ -13,13 +13,8 @@
     "test:all": "turbo run test",
     "test:api": "turbo run test --filter=@yotei/api"
   },
-  "keywords": [
-    "remix",
-    "hono",
-    "neverthrow"
-  ],
-  "author": "",
-  "license": "ISC",
+  "author": "kazukit",
+  "license": "MIT",
   "devDependencies": {
     "lefthook": "^1.11.13",
     "only-allow": "^1.2.1",
