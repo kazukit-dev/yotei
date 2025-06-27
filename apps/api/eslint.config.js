@@ -3,7 +3,7 @@ import node from "@yotei/eslint-config/node";
 
 export default [
   {
-    ignores: [".wrangler"],
+    ignores: [".wrangler", "dist"],
   },
   ...base,
   ...node,
