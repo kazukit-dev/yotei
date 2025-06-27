@@ -4,7 +4,7 @@ import { createMiddleware } from "hono/factory";
 import { logger } from "hono/logger";
 
 import { createDBClient } from "./db";
-import { CORS_ORIGIN, Env } from "./env";
+import { CORS_ORIGIN, DATABASE_URL, Env } from "./env";
 import { errorHandler } from "./error-handler";
 import { auth, authenticate } from "./modules/auth";
 import { calendar, checkCalendarPermission } from "./modules/calendar";
@@ -15,9 +15,10 @@ const app = new Hono<Env>();
 
 app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(logger());
+
 app.use(
   createMiddleware(async (c, next) => {
-    const db = createDBClient(c.env.DATABASE_URL);
+    const db = createDBClient(DATABASE_URL);
     c.set("db", db);
     await next();
   }),

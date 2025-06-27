@@ -1,6 +1,5 @@
 import { MiddlewareHandler } from "hono";
 
-import { createDBClient } from "../../../db";
 import { AuthenticatedEnv } from "../../../env";
 import { getCalendarById } from "../repositories/find-calendar-by-id";
 import {
@@ -18,7 +17,7 @@ export const checkCalendarPermission: MiddlewareHandler<
     return c.json({ message: "Calendar ID is required" }, 400);
   }
 
-  const db = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
   const command = toUnvalidatedCommand(calendarId);
 
   const workflow = checkCalendarPermissionWorkflow(userId, getCalendarById(db));

@@ -2,7 +2,13 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { ok } from "neverthrow";
 
-import { AuthenticatedEnv } from "../../../env";
+import {
+  AuthenticatedEnv,
+  OAUTH2_CLIENT_ID,
+  OAUTH2_CLIENT_SECRET,
+  OAUTH2_REDIRECT_URI,
+  OAUTH2_URL,
+} from "../../../env";
 import { authenticate } from "../middlewares/authenticate";
 import { createSessionId } from "../objects/session";
 import { createAuth0Provider } from "../provider/auth0";
@@ -28,15 +34,15 @@ app.post("/signin", zValidator("json", signinSchema), async (c) => {
     return c.json({ message: "Already signed in" }, 200);
   }
 
-  const authUrl = c.env.OAUTH2_URL;
-  const clientId = c.env.OAUTH2_CLIENT_ID;
-  const clientSecret = c.env.OAUTH2_CLIENT_SECRET;
+  const authUrl = OAUTH2_URL;
+  const clientId = OAUTH2_CLIENT_ID;
+  const clientSecret = OAUTH2_CLIENT_SECRET;
 
   const authContext = {
     clientId,
     clientSecret,
     baseUrl: authUrl,
-    redirectUri: c.env.OAUTH2_REDIRECT_URI,
+    redirectUri: OAUTH2_REDIRECT_URI,
   };
   const provider = createAuth0Provider(authContext);
   const command = toUnvalidatedSigninCommand(input);

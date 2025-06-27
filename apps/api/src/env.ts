@@ -16,6 +16,8 @@ const envSchema = z.object({
   // cookie
   COOKIE_DOMAIN: z.string().min(1),
   COOKIE_SECRET: z.string().min(1),
+  // port
+  PORT: z.coerce.number().default(8787),
 });
 
 const env = envSchema.parse(process.env);
@@ -37,4 +39,15 @@ export type AuthenticatedEnv = {
   };
 };
 
-export const CORS_ORIGIN = env.CORS_ORIGIN;
+export const {
+  NODE_ENV,
+  COOKIE_DOMAIN,
+  COOKIE_SECRET,
+  CORS_ORIGIN,
+  PORT,
+  OAUTH2_CLIENT_ID,
+  OAUTH2_CLIENT_SECRET,
+  OAUTH2_REDIRECT_URI,
+  OAUTH2_URL,
+  DATABASE_URL,
+} = env;

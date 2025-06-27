@@ -3,7 +3,6 @@ import { Hono } from "hono";
 import { BlankSchema } from "hono/types";
 import { ok, Result } from "neverthrow";
 
-import { createDBClient } from "../../../db";
 import { Env } from "../../../env";
 import { ValidationError } from "../../../shared/errors";
 import { tuple } from "../../../shared/helpers/tuple";
@@ -66,7 +65,7 @@ app.post("/", zValidator("json", createEventSchema), async (c) => {
 });
 
 app.get("/", zValidator("query", getEventsSchema), async (c) => {
-  const db = createDBClient(c.env.DATABASE_URL);
+  const db = c.get("db");
 
   const { calendarId } = c.req.param();
   const query = c.req.valid("query");
